@@ -95,6 +95,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: transform 0.3s, box-shadow 0.3s;
             font-size: 24px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.5s forwards;
         }
         
         .settings-btn:hover {
@@ -104,6 +106,10 @@
         
         .settings-btn:active {
             transform: scale(0.95);
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
         
         /* Modal impostazioni */
@@ -152,7 +158,7 @@
         
         .settings-title {
             font-family: 'Sniglet', cursive;
-            font-size: 3.5rem;
+            font-size: 1.5rem;
             color: #2C3E50;
             font-weight: 800;
         }
@@ -245,8 +251,24 @@
             height: 260px;
             object-fit: contain;
             filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
-            animation: gentleFloat 4s ease-in-out infinite;
+            animation: gentleFloat 4s ease-in-out infinite, fadeInScale 1.5s ease-out;
             margin-bottom: 30px;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        
+        @keyframes fadeInScale {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.5) rotate(-10deg); 
+            }
+            50% {
+                transform: scale(1.05) rotate(2deg);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg); 
+            }
         }
         
         @keyframes gentleFloat {
@@ -266,14 +288,14 @@
         
         .date-text {
             font-family: 'Sniglet', cursive;
-            font-size: 1.6rem;
+            font-size: 2.8rem;
             font-weight: 800;
             color: #2C3E50;
             text-shadow: 3px 3px 0px rgba(255,255,255,0.8), 5px 5px 10px rgba(0,0,0,0.2);
             letter-spacing: 1px;
             opacity: 0;
             transform: scale(0.8) rotate(-2deg);
-            animation: popIn 0.8s ease-out forwards;
+            animation: popIn 0.8s ease-out 0.8s forwards;
             line-height: 1.3;
         }
         
@@ -294,7 +316,7 @@
         
         .quote-text {
             font-family: 'Gochi Hand', cursive;
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 400;
             color: #1A252F;
             line-height: 1.5;
@@ -326,7 +348,8 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
             z-index: 50;
-            opacity: 0.6;
+            opacity: 0;
+            animation: spin 1s linear infinite, fadeIn 1s ease-out 1s forwards;
         }
         
         @keyframes spin {
@@ -340,8 +363,9 @@
             font-family: 'Sniglet', cursive;
             font-size: 0.8rem;
             color: #2C3E50;
-            opacity: 0.6;
+            opacity: 0;
             z-index: 50;
+            animation: fadeIn 1s ease-out 1s forwards;
         }
         
         .closing-screen {
@@ -378,45 +402,9 @@
             0%, 100% { opacity: 0.8; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.05); }
         }
-        
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #87CEEB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            transition: opacity 0.5s;
-        }
-        
-        .loading.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .loading-text {
-            font-family: 'Sniglet', cursive;
-            font-size: 2.5rem; /* scritta iniziale */
-            color: white;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
     </style>
 </head>
 <body>
-    <!-- Loading -->
-    <div class="loading" id="loading">
-        <div class="loading-text" id="loadingText">Vediamo...</div>
-    </div>
-    
     <!-- Cielo -->
     <div class="sky-container">
         <div class="cloud cloud1"></div>
@@ -580,17 +568,15 @@
         // Traduzioni UI
         const translations = {
             it: {
-                loading: "Vediamo...",
                 settings: "Impostazioni",
                 closeHint: "Si chiude tra 10s",
-                closing: "A domani!<br><span style='font-size: 1.8rem;'>🙏</span>",
+                closing: "Namaste 🙏<br><span style='font-size: 1.2rem;'>A domani!</span>",
                 todayIs: "Oggi è "
             },
             en: {
-                loading: "Let's see...",
                 settings: "Settings",
                 closeHint: "Closes in 10s",
-                closing: "See you tomorrow!<br> <span style='font-size: 1.8rem;'>🙏</span>",
+                closing: "Namaste 🙏<br><span style='font-size: 1.2rem;'>See you tomorrow!</span>",
                 todayIs: "Today is "
             }
         };
@@ -613,7 +599,6 @@
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
             localStorage.setItem(key, quote);
             
-            // Cleanup vecchie frasi
             cleanupOldQuotes();
             return quote;
         }
@@ -660,7 +645,7 @@
             currentLang = lang;
             localStorage.setItem('app_language', lang);
             updateLanguageUI();
-            location.reload(); // Ricarica per applicare lingua
+            location.reload();
         }
 
         function updateLanguageUI() {
@@ -674,7 +659,6 @@
         // Animazioni
         function startAnimation() {
             const t = translations[currentLang];
-            document.getElementById('loadingText').textContent = t.loading;
             document.getElementById('closeHint').textContent = t.closeHint;
             document.getElementById('closingText').innerHTML = t.closing;
             
@@ -701,11 +685,8 @@
 
         // Init
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loading').classList.add('hidden');
-                startAnimation();
-                scheduleClose();
-            }, 800);
+            startAnimation();
+            scheduleClose();
         });
 
         // Previene zoom
