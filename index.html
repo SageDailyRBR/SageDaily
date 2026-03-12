@@ -583,14 +583,14 @@
                 loading: "Vediamo...",
                 settings: "Impostazioni",
                 closeHint: "Si chiude tra 10s",
-                closing: "Namaste 🙏<br><span style='font-size: 1.8rem;'>A domani!</span>",
+                closing: "A domani!<br><span style='font-size: 1.8rem;'>🙏</span>",
                 todayIs: "Oggi è "
             },
             en: {
                 loading: "Let's see...",
                 settings: "Settings",
                 closeHint: "Closes in 10s",
-                closing: "Namaste 🙏<br><span style='font-size: 1.8rem;'>See you tomorrow!</span>",
+                closing: "See you tomorrow!<br> <span style='font-size: 1.8rem;'>🙏</span>",
                 todayIs: "Today is "
             }
         };
@@ -696,7 +696,7 @@
         function scheduleClose() {
             setTimeout(() => {
                 document.getElementById('closingScreen').classList.add('active');
-            }, 5000);
+            }, 10000);
         }
 
         // Init
