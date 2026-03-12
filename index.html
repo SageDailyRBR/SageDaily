@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Daily Sage">
+    <title>Daily Sage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&family=Gochi+Hand&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Sniglet', cursive;
+            position: relative;
+            background: #87CEEB;
+        }
+        
+        /* Cielo con nuvole */
+        .sky-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #4A90E2 0%, #87CEEB 50%, #E0F6FF 100%);
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+            opacity: 0.9;
+            animation: floatUp linear infinite;
+        }
+        
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) translateX(0); }
+            100% { transform: translateY(-200px) translateX(20px); }
+        }
+        
+        .cloud1 { width: 100px; height: 40px; left: 10%; animation-duration: 25s; animation-delay: 0s; }
+        .cloud1::before { width: 50px; height: 50px; top: -25px; left: 10px; }
+        .cloud1::after { width: 60px; height: 40px; top: -15px; right: 10px; }
+        
+        .cloud2 { width: 80px; height: 35px; left: 30%; animation-duration: 30s; animation-delay: 5s; }
+        .cloud2::before { width: 40px; height: 40px; top: -20px; left: 15px; }
+        .cloud2::after { width: 50px; height: 35px; top: -10px; right: 15px; }
+        
+        .cloud3 { width: 120px; height: 45px; left: 60%; animation-duration: 35s; animation-delay: 2s; }
+        .cloud3::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+        .cloud3::after { width: 70px; height: 45px; top: -20px; right: 20px; }
+        
+        .cloud4 { width: 90px; height: 38px; left: 80%; animation-duration: 28s; animation-delay: 8s; }
+        .cloud4::before { width: 45px; height: 45px; top: -22px; left: 12px; }
+        .cloud4::after { width: 55px; height: 38px; top: -12px; right: 12px; }
+        
+        .cloud5 { width: 110px; height: 42px; left: 45%; animation-duration: 32s; animation-delay: 12s; }
+        .cloud5::before { width: 55px; height: 55px; top: -28px; left: 18px; }
+        .cloud5::after { width: 65px; height: 42px; top: -18px; right: 18px; }
+        
+        /* Bottone impostazioni */
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 24px;
+        }
+        
+        .settings-btn:hover {
+            transform: rotate(90deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .settings-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Modal impostazioni */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .settings-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .settings-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        
+        .settings-modal.active .settings-content {
+            transform: scale(1);
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .settings-title {
+            font-family: 'Sniglet', cursive;
+            font-size: 1.5rem;
+            color: #2C3E50;
+            font-weight: 800;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #7F8C8D;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: #F0F0F0;
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .language-option:hover {
+            background: #F8F9FA;
+        }
+        
+        .language-option.selected {
+            background: #E3F2FD;
+            border-color: #4A90E2;
+        }
+        
+        .language-flag {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        
+        .language-info {
+            flex: 1;
+        }
+        
+        .language-name {
+            font-family: 'Sniglet', cursive;
+            font-size: 1.1rem;
+            color: #2C3E50;
+            font-weight: 700;
+        }
+        
+        .language-native {
+            font-size: 0.9rem;
+            color: #7F8C8D;
+        }
+        
+        .check-mark {
+            font-size: 1.5rem;
+            color: #4A90E2;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .language-option.selected .check-mark {
+            opacity: 1;
+        }
+        
+        /* Container principale */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .sage-image {
+            width: 260px;
+            height: 260px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+            animation: gentleFloat 4s ease-in-out infinite;
+            margin-bottom: 30px;
+        }
+        
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .text-container {
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            max-width: 90vw;
+        }
+        
+        .date-text {
+            font-family: 'Sniglet', cursive;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2C3E50;
+            text-shadow: 3px 3px 0px rgba(255,255,255,0.8), 5px 5px 10px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: scale(0.8) rotate(-2deg);
+            animation: popIn 0.8s ease-out forwards;
+            line-height: 1.3;
+        }
+        
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5) rotate(-5deg); }
+            70% { transform: scale(1.05) rotate(1deg); }
+            100% { opacity: 1; transform: scale(1) rotate(-2deg); }
+        }
+        
+        .fade-out {
+            animation: fadeOutRotate 0.8s ease-in forwards;
+        }
+        
+        @keyframes fadeOutRotate {
+            0% { opacity: 1; transform: scale(1) rotate(-2deg); }
+            100% { opacity: 0; transform: scale(1.1) rotate(3deg) translateY(-30px); filter: blur(5px); }
+        }
+        
+        .quote-text {
+            font-family: 'Gochi Hand', cursive;
+            font-size: 1.6rem;
+            font-weight: 400;
+            color: #1A252F;
+            line-height: 1.5;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.9), 4px 4px 8px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(40px) rotate(3deg);
+            max-width: 600px;
+            padding: 0 20px;
+        }
+        
+        .quote-text.visible {
+            animation: slideUpHandwritten 1s ease-out forwards;
+        }
+        
+        @keyframes slideUpHandwritten {
+            0% { opacity: 0; transform: translateY(40px) rotate(3deg) scale(0.9); }
+            60% { transform: translateY(-5px) rotate(-1deg) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) rotate(1deg) scale(1); }
+        }
+        
+        .close-timer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(44, 62, 80, 0.3);
+            border-top-color: #2C3E50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 50;
+            opacity: 0.6;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .close-hint {
+            position: fixed;
+            bottom: 65px;
+            right: 20px;
+            font-family: 'Sniglet', cursive;
+            font-size: 0.8rem;
+            color: #2C3E50;
+            opacity: 0.6;
+            z-index: 50;
+        }
+        
+        .closing-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #4A90E2, #87CEEB);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s;
+        }
+        
+        .closing-screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .closing-text {
+            font-family: 'Sniglet', cursive;
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: breathe 2s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #87CEEB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-text {
+            font-family: 'Sniglet', cursive;
+            font-size: 1.5rem;
+            color: white;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="loading-text" id="loadingText">Caricamento saggezza...</div>
+    </div>
+    
+    <!-- Cielo -->
+    <div class="sky-container">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="cloud cloud4"></div>
+        <div class="cloud cloud5"></div>
+    </div>
+    
+    <!-- Bottone impostazioni -->
+    <button class="settings-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
+    
+    <!-- Modal impostazioni -->
+    <div class="settings-modal" id="settingsModal" onclick="closeSettingsOutside(event)">
+        <div class="settings-content" onclick="event.stopPropagation()">
+            <div class="settings-header">
+                <div class="settings-title" id="settingsTitle">Impostazioni</div>
+                <button class="close-btn" onclick="closeSettings()">×</button>
+            </div>
+            
+            <div class="language-option selected" onclick="selectLanguage('it')" id="lang-it">
+                <div class="language-flag">🇮🇹</div>
+                <div class="language-info">
+                    <div class="language-name">Italiano</div>
+                    <div class="language-native">Italian</div>
+                </div>
+                <div class="check-mark">✓</div>
+            </div>
+            
+            <div class="language-option" onclick="selectLanguage('en')" id="lang-en">
+                <div class="language-flag">🇬🇧</div>
+                <div class="language-info">
+                    <div class="language-name">English</div>
+                    <div class="language-native">English</div>
+                </div>
+                <div class="check-mark">✓</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Container principale -->
+    <div class="container">
+        <img src="Santone.png" alt="Sage" class="sage-image" id="sageImage">
+        
+        <div class="text-container">
+            <div id="dateDisplay" class="date-text"></div>
+            <div id="quoteDisplay" class="quote-text"></div>
+        </div>
+    </div>
+    
+    <!-- Timer chiusura -->
+    <div class="close-hint" id="closeHint">Si chiude tra 20s</div>
+    <div class="close-timer" id="closeTimer"></div>
+    
+    <!-- Schermo chiusura -->
+    <div class="closing-screen" id="closingScreen">
+        <div class="closing-text" id="closingText">Namaste 🙏<br><span style="font-size: 1.2rem;">A domani!</span></div>
+    </div>
+
+    <script>
+        // Database frasi
+        const quotesDB = {
+            it: [
+                "Oggi va come va", "Oggi meglio di ieri", "No, oggi non è giornata", "Me lo sento, oggi gira bene",
+                "Perché fare oggi quello che puoi fare domani?", "Se lo fai oggi, stai avanti", "Torna domani che è meglio",
+                "Oggi no, domani sì", "Fossi in te ci proverei", "Dai, fai finta di lavorare",
+                "Il destino è in pausa… chissà domani", "Meglio che non sfidi la sorte", "Vuoi un consiglio? Sopravvivi e basta",
+                "Mmmh, così così", "Il karma ti osserva", "Non complicarti la vita", "Vuoi vincere facile?",
+                "Oggi non strafare", "È meglio se ti prendi una pausa", "Me lo sento, qualcosa di buono succederà",
+                "Fai un passo avanti, il risultato è lì", "È un buon giorno per iniziare", "Secondo me puoi cambiare qualcosa",
+                "Fidati dell'istinto", "Prova a crederci", "Sì, oggi è una buona occasione", "Può andare meglio di quanto pensi",
+                "Mi raccomando, scegli bene", "Oh, finalmente una nuova possibilità", "Qualcosa potrebbe sorprenderti",
+                "Non aspettarti troppo", "Ti basta fare un passo", "Prendila con calma, non è giornata", "Tieni duro, sempre",
+                "Potrebbe essere il giorno giusto", "Non ci pensare troppo, fai il minimo indispensabile", "Provaci e basta",
+                "Vai piano ma vai", "Respira e ricomincia", "Non serve capire tutto subito", "Lascia andare il resto",
+                "Prova a sorprenderti", "Non pensarci troppo", "Fidati del momento", "Segui la corrente",
+                "Tieni gli occhi aperti", "Non correre, basta arrivare", "Ascolta quello che senti", "Prendila con filosofia",
+                "Basta poco per cambiare direzione", "Resta curioso", "Osserva prima di agire", "Una cosa alla volta",
+                "Non avere fretta", "Lascia parlare il tempo", "Non aspettarti miracoli", "Provaci comunque",
+                "Cambia prospettiva", "Pensa al prossimo passo", "La strada semplice spesso è quella giusta",
+                "Fai pace con la giornata", "Può andare bene così", "Prendila come viene", "A volte basta esserci",
+                "La fortuna passa quando meno te lo aspetti", "Meglio provarci che pensarci troppo", "Un piccolo passo vale più di mille pensieri",
+                "L'universo ha senso dell'umorismo", "Il tempo rimette le cose a posto", "Ogni tanto fermarsi è progresso",
+                "Meglio ridere che capire tutto", "Le cose arrivano quando smetti di inseguirle", "Un giorno normale può sorprenderti",
+                "La calma è una strategia", "Meglio semplice che perfetto", "A volte la risposta è aspettare",
+                "Il dubbio è già un passo avanti", "Un sorriso è un buon investimento", "Respira, poi decidi",
+                "Meglio tardi che mai", "Il silenzio spesso sa più cose", "La strada si costruisce camminando",
+                "Anche il caos ha un ordine", "La pazienza è sottovalutata", "Meglio curiosi che sicuri",
+                "La vita ama sorprendere", "Le coincidenze hanno senso dell'ironia", "Un momento può cambiare tutto",
+                "La semplicità è una forma di intelligenza", "Un po' di leggerezza aiuta sempre", "Ogni giornata ha il suo ritmo",
+                "Meglio sorridere che discutere", "Sai come diceva Socrate? So di non sapere.",
+                "Sai come diceva Confucio? Anche il viaggio più lungo inizia con un passo.",
+                "Sai come diceva Seneca? Non è che abbiamo poco tempo, è che ne perdiamo molto.",
+                "Sai come diceva Marco Aurelio? La felicità dipende dalla qualità dei tuoi pensieri.",
+                "Sai come diceva Einstein? La vita è come andare in bicicletta.",
+                "Sai come diceva Oscar Wilde? Sii te stesso.",
+                "Sai come diceva Gandhi? Sii il cambiamento che vuoi vedere nel mondo.",
+                "Sai come diceva Buddha? La pace viene da dentro.",
+                "Sai come diceva Nietzsche? Chi ha un perché può sopportare quasi ogni come.",
+                "Sai come diceva Leonardo da Vinci? La semplicità è la massima sofisticazione.",
+                "Sai come diceva Steve Jobs? Stay hungry, stay foolish.",
+                "Sai come diceva Charlie Chaplin? Un giorno senza sorriso è un giorno perso.",
+                "Sai come diceva Aristotele? La felicità dipende da noi.",
+                "Sai come diceva Lao Tzu? La natura non ha fretta.",
+                "Sai come diceva Mark Twain? Tra vent'anni sarai più deluso dalle cose che non hai fatto.",
+                "Sai come diceva Churchill? Il successo è passare da un fallimento all'altro.",
+                "Sai come diceva Picasso? Ogni bambino è un artista.",
+                "Sai come diceva Bruce Lee? Sii acqua, amico mio."
+            ],
+            en: [
+                "Today goes as it goes", "Today is better than yesterday", "No, today is not the day",
+                "I can feel it, today might go well", "Why do today what you can do tomorrow?",
+                "If you do it today, you're ahead", "Come back tomorrow, it might be better",
+                "Not today, maybe tomorrow", "If I were you, I'd try", "Go on, pretend you're working",
+                "Destiny is on pause… maybe tomorrow", "Better not challenge fate", "Want advice? Just survive",
+                "Hmm… so-so", "Karma is watching you", "Don't complicate your life", "Looking for an easy win?",
+                "Don't overdo it today", "Maybe you should take a break", "I feel something good might happen",
+                "Take one step forward", "It's a good day to start", "You might be able to change something",
+                "Trust your instinct", "Try believing in it", "Yes, today is a good opportunity",
+                "It might go better than you think", "Choose wisely", "Finally, a new possibility",
+                "Something might surprise you", "Don't expect too much", "One step is enough",
+                "Take it easy", "Hang in there", "This could be the right day", "Just do the minimum",
+                "Just try", "Go slow, but keep going", "Breathe and begin again", "You don't need to understand everything right away",
+                "Let go of the rest", "Try to surprise yourself", "Don't overthink it", "Trust the moment",
+                "Go with the flow", "Keep your eyes open", "Don't rush, just arrive", "Listen to what you feel",
+                "Take it philosophically", "Sometimes a little is enough to change direction", "Stay curious",
+                "Observe before acting", "One thing at a time", "Don't be in a hurry", "Let time speak",
+                "Don't expect miracles", "Try anyway", "Change perspective", "Think only about the next step",
+                "The simple road is often the right one", "Make peace with the day", "This may be good enough",
+                "Take it as it comes", "Sometimes just being there is enough", "Luck appears when you least expect it",
+                "Better try than overthink", "A small step beats a thousand thoughts", "The universe has a sense of humor",
+                "Time fixes many things", "Sometimes stopping is progress", "Better laugh than understand everything",
+                "Things arrive when you stop chasing them", "An ordinary day can surprise you", "Calm is a strategy",
+                "Simple beats perfect", "Sometimes the answer is waiting", "Doubt is already progress",
+                "A smile is a good investment", "Breathe, then decide", "Better late than never",
+                "Silence often knows more", "The road appears while walking", "Even chaos has order",
+                "Patience is underrated", "Better curious than certain", "Life loves surprises",
+                "Coincidences have a sense of humor", "One moment can change everything", "Simplicity is intelligence",
+                "A little lightness helps", "Every day has its rhythm", "Better smile than argue",
+                "Do you know what Socrates used to say? I know that I know nothing.",
+                "Do you know what Confucius used to say? A journey of a thousand miles begins with one step.",
+                "Do you know what Seneca used to say? It is not that we have a short time to live, but that we waste much of it.",
+                "Do you know what Marcus Aurelius said? The happiness of your life depends on the quality of your thoughts.",
+                "Do you know what Einstein said? Life is like riding a bicycle.",
+                "Do you know what Oscar Wilde said? Be yourself.",
+                "Do you know what Gandhi said? Be the change you wish to see in the world.",
+                "Do you know what Buddha said? Peace comes from within.",
+                "Do you know what Nietzsche said? He who has a why can bear almost any how.",
+                "Do you know what Leonardo da Vinci said? Simplicity is the ultimate sophistication.",
+                "Do you know what Steve Jobs said? Stay hungry, stay foolish.",
+                "Do you know what Charlie Chaplin said? A day without laughter is a day wasted.",
+                "Do you know what Aristotle said? Happiness depends on ourselves.",
+                "Do you know what Lao Tzu said? Nature does not hurry.",
+                "Do you know what Mark Twain said? Twenty years from now you will regret what you didn't do.",
+                "Do you know what Churchill said? Success is going from failure to failure without losing enthusiasm.",
+                "Do you know what Picasso said? Every child is an artist.",
+                "Do you know what Bruce Lee said? Be water, my friend."
+            ]
+        };
+
+        // Traduzioni UI
+        const translations = {
+            it: {
+                loading: "Caricamento saggezza...",
+                settings: "Impostazioni",
+                closeHint: "Si chiude tra 20s",
+                closing: "Namaste 🙏<br><span style='font-size: 1.2rem;'>A domani!</span>",
+                todayIs: "Oggi è "
+            },
+            en: {
+                loading: "Loading wisdom...",
+                settings: "Settings",
+                closeHint: "Closes in 20s",
+                closing: "Namaste 🙏<br><span style='font-size: 1.2rem;'>See you tomorrow!</span>",
+                todayIs: "Today is "
+            }
+        };
+
+        // Gestione lingua
+        let currentLang = localStorage.getItem('app_language') || 'it';
+
+        function getTodayString() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function getQuoteForToday() {
+            const today = getTodayString();
+            const key = `quote_${currentLang}_${today}`;
+            const saved = localStorage.getItem(key);
+            
+            if (saved) return saved;
+            
+            const quotes = quotesDB[currentLang];
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            localStorage.setItem(key, quote);
+            
+            // Cleanup vecchie frasi
+            cleanupOldQuotes();
+            return quote;
+        }
+
+        function cleanupOldQuotes() {
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekAgoStr = weekAgo.toISOString().split('T')[0];
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('quote_')) {
+                    const datePart = key.split('_').pop();
+                    if (datePart && datePart < weekAgoStr) {
+                        localStorage.removeItem(key);
+                    }
+                }
+            }
+        }
+
+        function formatDate() {
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            const locale = currentLang === 'it' ? 'it-IT' : 'en-US';
+            return translations[currentLang].todayIs + new Date().toLocaleDateString(locale, options);
+        }
+
+        // UI Impostazioni
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            updateLanguageUI();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function closeSettingsOutside(event) {
+            if (event.target === document.getElementById('settingsModal')) {
+                closeSettings();
+            }
+        }
+
+        function selectLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('app_language', lang);
+            updateLanguageUI();
+            location.reload(); // Ricarica per applicare lingua
+        }
+
+        function updateLanguageUI() {
+            document.querySelectorAll('.language-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.getElementById(`lang-${currentLang}`).classList.add('selected');
+            document.getElementById('settingsTitle').textContent = translations[currentLang].settings;
+        }
+
+        // Animazioni
+        function startAnimation() {
+            const t = translations[currentLang];
+            document.getElementById('loadingText').textContent = t.loading;
+            document.getElementById('closeHint').textContent = t.closeHint;
+            document.getElementById('closingText').innerHTML = t.closing;
+            
+            const dateDisplay = document.getElementById('dateDisplay');
+            const quoteDisplay = document.getElementById('quoteDisplay');
+            
+            dateDisplay.textContent = formatDate();
+            
+            setTimeout(() => {
+                dateDisplay.classList.add('fade-out');
+                setTimeout(() => {
+                    dateDisplay.style.display = 'none';
+                    quoteDisplay.textContent = getQuoteForToday();
+                    quoteDisplay.classList.add('visible');
+                }, 800);
+            }, 2500);
+        }
+
+        function scheduleClose() {
+            setTimeout(() => {
+                document.getElementById('closingScreen').classList.add('active');
+            }, 20000);
+        }
+
+        // Init
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                startAnimation();
+                scheduleClose();
+            }, 800);
+        });
+
+        // Previene zoom
+        document.addEventListener('gesturestart', e => e.preventDefault());
+        document.addEventListener('dblclick', e => e.preventDefault());
+    </script>
+</body>
+</html>
