@@ -288,7 +288,7 @@
         
         .date-text {
             font-family: 'Sniglet', cursive;
-            font-size: 2.2rem;
+            font-size: 2.8rem;
             font-weight: 800;
             color: #2C3E50;
             text-shadow: 3px 3px 0px rgba(255,255,255,0.8), 5px 5px 10px rgba(0,0,0,0.2);
@@ -315,7 +315,7 @@
         }
         
         .quote-text {
-            font-family: 'Sniglet', cursive;
+            font-family: 'Gochi Hand', cursive;
             font-size: 2.2rem;
             font-weight: 400;
             color: #1A252F;
@@ -328,13 +328,93 @@
         }
         
         .quote-text.visible {
-            animation: slideUpHandwritten 2s ease-out forwards;
+            animation: slideUpHandwritten 1s ease-out forwards;
         }
         
         @keyframes slideUpHandwritten {
             0% { opacity: 0; transform: translateY(40px) rotate(3deg) scale(0.9); }
             60% { transform: translateY(-5px) rotate(-1deg) scale(1.02); }
             100% { opacity: 1; transform: translateY(0) rotate(1deg) scale(1); }
+        }
+        
+        /* Stili speciali per il sabato SuperEnalotto */
+        .saturday-special {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF6347 100%) !important;
+            padding: 30px !important;
+            border-radius: 20px !important;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5) !important;
+            border: 4px solid #FFD700 !important;
+        }
+        
+        .lottery-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .lottery-ball {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #ff9800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sniglet', cursive;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #d32f2f;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 -2px 5px rgba(0,0,0,0.2);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+            animation: bounceIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .lottery-ball:nth-child(1) { animation-delay: 0.1s; }
+        .lottery-ball:nth-child(2) { animation-delay: 0.2s; }
+        .lottery-ball:nth-child(3) { animation-delay: 0.3s; }
+        .lottery-ball:nth-child(4) { animation-delay: 0.4s; }
+        .lottery-ball:nth-child(5) { animation-delay: 0.5s; }
+        .lottery-ball:nth-child(6) { animation-delay: 0.6s; }
+        
+        .superstar-ball {
+            background: radial-gradient(circle at 30% 30%, #e1f5fe, #0288d1) !important;
+            color: #01579b !important;
+            animation-delay: 0.8s !important;
+            position: relative;
+        }
+        
+        .superstar-ball::after {
+            content: '★';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 1.2rem;
+            color: #FFD700;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        
+        .fortune-text {
+            font-family: 'Sniglet', cursive;
+            font-size: 1.8rem;
+            color: #d32f2f;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         .close-timer {
@@ -461,7 +541,7 @@
     
     <!-- Schermo chiusura -->
     <div class="closing-screen" id="closingScreen">
-        <div class="closing-text" id="closingText">A domani!<br><span style="font-size: 1.2rem;">🙏</span></div>
+        <div class="closing-text" id="closingText">Namaste 🙏<br><span style="font-size: 1.2rem;">A domani!</span></div>
     </div>
 
     <script>
@@ -565,19 +645,48 @@
             ]
         };
 
+        // Statistiche SuperEnalotto (aggiornate a marzo 2026)
+        // Decine più ricorrenti basate sui numeri più frequenti
+        const superEnalottoStats = {
+            // Decine più ricorrenti (80-89, 40-49, 60-69 sono le più calde)
+            hotRanges: [
+                { min: 80, max: 89, weight: 3 }, // Decina 80-89 molto frequente
+                { min: 40, max: 49, weight: 3 }, // Decina 40-49 molto frequente  
+                { min: 60, max: 69, weight: 2 }, // Decina 60-69 frequente
+                { min: 50, max: 59, weight: 2 }, // Decina 50-59 frequente
+                { min: 70, max: 79, weight: 1 }  // Decina 70-79 moderata
+            ],
+            // Numeri specifici più frequenti per decina
+            hotNumbers: {
+                80: [80, 81, 83, 85, 86, 88, 82], // 85(319), 86(308), 83(306), 80(305), 81(305), 88(294), 82(299)
+                40: [49, 45, 43, 48, 41, 40],     // 49(309), 45(297), 43(288), 48(282), 41(289), 40(286)
+                60: [68, 66, 65, 63, 62, 69],     // 68(298), 66(292), 65(292), 63(290), 62(289), 69(287)
+                50: [55, 52, 56, 51],             // 55(305), 52(302), 56(288), 51(289)
+                70: [79, 77, 75]                  // 79(307), 77(301), 75(290)
+            },
+            // Numeri SuperStar meno frequenti nelle decine calde (per la logica richiesta)
+            superstarCold: [87, 33, 38, 30, 34, 55, 54, 60, 81, 19, 28, 41],
+            // Numeri SuperStar più frequenti (backup)
+            superstarHot: [49, 51, 80, 11, 5, 52, 44, 45]
+        };
+
         // Traduzioni UI
         const translations = {
             it: {
                 settings: "Impostazioni",
                 closeHint: "Si chiude tra 10s",
-                closing: "A domani!<br><span style='font-size: 2.2rem;'>🙏</span>",
-                todayIs: " " /*Oggi è*/
+                closing: "Namaste 🙏<br><span style='font-size: 1.2rem;'>A domani!</span>",
+                todayIs: "Oggi è ",
+                fortuneMsg: "🎰 Oggi tenta la fortuna,<br>ecco i miei numeri fortunati:",
+                saturday: "Sabato"
             },
             en: {
                 settings: "Settings",
                 closeHint: "Closes in 10s",
-                closing: "See you tomorrow!<br><span style='font-size: 2.2rem;'>🙏</span>",
-                todayIs: " " /*Today is */
+                closing: "Namaste 🙏<br><span style='font-size: 1.2rem;'>See you tomorrow!</span>",
+                todayIs: "Today is ",
+                fortuneMsg: "🎰 Try your luck today,<br>here are my lucky numbers:",
+                saturday: "Saturday"
             }
         };
 
@@ -588,7 +697,87 @@
             return new Date().toISOString().split('T')[0];
         }
 
+        function isSaturday() {
+            return new Date().getDay() === 6;
+        }
+
+        // Genera numeri casuali da un array con peso
+        function weightedRandom(numbers, count) {
+            const result = [];
+            const pool = [...numbers];
+            
+            for (let i = 0; i < count && pool.length > 0; i++) {
+                const index = Math.floor(Math.random() * pool.length);
+                result.push(pool.splice(index, 1)[0]);
+            }
+            return result.sort((a, b) => a - b);
+        }
+
+        // Genera i 6 numeri principali basati sulle decine più ricorrenti
+        function generateLuckyNumbers() {
+            const numbers = [];
+            const stats = superEnalottoStats;
+            
+            // Seleziona 2 numeri dalla decina 80-89 (la più calda)
+            const range80 = stats.hotNumbers[80];
+            numbers.push(...weightedRandom(range80, 2));
+            
+            // Seleziona 2 numeri dalla decina 40-49 (molto calda)
+            const range40 = stats.hotNumbers[40];
+            numbers.push(...weightedRandom(range40, 2));
+            
+            // Seleziona 1 numero dalla decina 60-69
+            const range60 = stats.hotNumbers[60];
+            numbers.push(...weightedRandom(range60, 1));
+            
+            // Seleziona 1 numero dalla decina 50-59 o 70-79
+            const remainingRanges = [stats.hotNumbers[50], stats.hotNumbers[70]].flat();
+            numbers.push(...weightedRandom(remainingRanges, 1));
+            
+            return numbers.sort((a, b) => a - b);
+        }
+
+        // Genera il numero SuperStar dalle decine ricorrenti ma meno estratto
+        function generateSuperStar() {
+            // Prende dai numeri meno frequenti (cold) che sono nelle decine calde
+            const coldInHotRanges = superEnalottoStats.superstarCold.filter(n => 
+                (n >= 80 && n <= 89) || (n >= 40 && n <= 49) || (n >= 60 && n <= 69)
+            );
+            
+            if (coldInHotRanges.length > 0) {
+                return coldInHotRanges[Math.floor(Math.random() * coldInHotRanges.length)];
+            }
+            
+            // Fallback: prende un numero casuale dai meno frequenti
+            return superEnalottoStats.superstarCold[
+                Math.floor(Math.random() * superEnalottoStats.superstarCold.length)
+            ];
+        }
+
+        function getSaturdayFortune() {
+            const today = getTodayString();
+            const key = `fortune_${today}`;
+            const saved = localStorage.getItem(key);
+            
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            
+            const numbers = generateLuckyNumbers();
+            const superstar = generateSuperStar();
+            const fortune = { numbers, superstar };
+            
+            localStorage.setItem(key, JSON.stringify(fortune));
+            cleanupOldQuotes();
+            return fortune;
+        }
+
         function getQuoteForToday() {
+            // Se è sabato, restituisce null per indicare che deve mostrare la fortuna
+            if (isSaturday()) {
+                return null;
+            }
+            
             const today = getTodayString();
             const key = `quote_${currentLang}_${today}`;
             const saved = localStorage.getItem(key);
@@ -610,7 +799,7 @@
             
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key && key.startsWith('quote_')) {
+                if (key && (key.startsWith('quote_') || key.startsWith('fortune_'))) {
                     const datePart = key.split('_').pop();
                     if (datePart && datePart < weekAgoStr) {
                         localStorage.removeItem(key);
@@ -656,6 +845,24 @@
             document.getElementById('settingsTitle').textContent = translations[currentLang].settings;
         }
 
+        // Crea l'HTML per i numeri del SuperEnalotto
+        function createLotteryHTML(fortune) {
+            const t = translations[currentLang];
+            let html = `<div class="fortune-text">${t.fortuneMsg}</div>`;
+            html += '<div class="lottery-numbers">';
+            
+            // 6 numeri principali
+            fortune.numbers.forEach(num => {
+                html += `<div class="lottery-ball">${num}</div>`;
+            });
+            
+            // Numero SuperStar
+            html += `<div class="lottery-ball superstar-ball">${fortune.superstar}</div>`;
+            html += '</div>';
+            
+            return html;
+        }
+
         // Animazioni
         function startAnimation() {
             const t = translations[currentLang];
@@ -671,8 +878,19 @@
                 dateDisplay.classList.add('fade-out');
                 setTimeout(() => {
                     dateDisplay.style.display = 'none';
-                    quoteDisplay.textContent = getQuoteForToday();
-                    quoteDisplay.classList.add('visible');
+                    
+                    const quote = getQuoteForToday();
+                    
+                    if (quote === null) {
+                        // È sabato - mostra i numeri fortunati
+                        const fortune = getSaturdayFortune();
+                        quoteDisplay.innerHTML = createLotteryHTML(fortune);
+                        quoteDisplay.classList.add('visible', 'saturday-special');
+                    } else {
+                        // Giorno normale - mostra frase filosofica
+                        quoteDisplay.textContent = quote;
+                        quoteDisplay.classList.add('visible');
+                    }
                 }, 800);
             }, 2500);
         }
