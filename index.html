@@ -1371,14 +1371,14 @@
         }
 
         // GESTIONE TIMER DI CHIUSURA (NUOVO)
-        function startCloseTimer(delay) {
+        function startCloseTimer(delay, force = false) {
             // Cancella timer precedente se esiste
             if (closeTimerId) {
                 clearTimeout(closeTimerId);
             }
             
             // Non avviare se l'oracolo è attivo
-            if (isOracleActive) {
+            if (isOracleActive && !force) {
                 return;
             }
             
@@ -1399,8 +1399,8 @@
         }
 
         function resetCloseTimerAfterAnswer() {
-            // Chiude 5 secondi dopo la risposta
-            startCloseTimer(CLOSE_DELAY_AFTER_ANSWER);
+            // Chiude 5 secondi dopo la risposta, FORZANDO il timer anche se isOracleActive è true
+            startCloseTimer(CLOSE_DELAY_AFTER_ANSWER, true);
         }
 
         // FUNZIONI ORACOLO
@@ -1533,7 +1533,7 @@
                        // Dà 5 secondi all'utente per decidere se fare un'altra domanda
                        resetCloseTimerAfterAnswer();
                     }
-                }, 9000);
+                }, 3000);
                 
                 
             }, meditationTime);
@@ -1555,6 +1555,7 @@
             
             // Se si fa una nuova domanda, annulla il timer e aspetta la nuova risposta
             cancelCloseTimer();
+            isOracleActive = true;
             
             // Rimuovi effetto mistico (opzionale - togli commento se vuoi tornare normale)
             // document.getElementById('skyContainer').classList.remove('mystic');
