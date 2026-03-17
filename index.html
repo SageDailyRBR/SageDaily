@@ -933,7 +933,6 @@
         // Database Oracolo - Risposte mistiche/ironiche/ambighe
         const oracleDB = {
             it: {
-                // Risposte per domande sì/no
                 yesNo: [
                     "Le stelle dicono di sì... ma potrebbero essere confuse.",
                     "L'universo annuisce, ma non garantisce nulla.",
@@ -948,7 +947,6 @@
                     "Le nuvole coprono la risposta. Riprova dopo il caffè.",
                     "Il karma è indeciso. Anche lui ha le sue giornate."
                 ],
-                // Risposte per domande sul futuro
                 future: [
                     "Il futuro è come il meteo: tutti ne parlano, nessuno lo sa davvero.",
                     "Vedo grandi cose... o forse è solo la mia vista che peggiora.",
@@ -961,7 +959,6 @@
                     "Il tempo è un cerchio, ma tu stai andando in tangenziale.",
                     "Il destino ha piani per te, ma non li ha condivisi con me."
                 ],
-                // Risposte per domande sull'amore
                 love: [
                     "Il cuore ha le sue ragioni che il saggio non capisce affatto.",
                     "L'amore è nell'aria... o forse è solo polline.",
@@ -974,7 +971,6 @@
                     "L'amore arriva quando smetti di cercarlo, o quando apri il frigo.",
                     "Le stelle consigliano pazienza, ma anche un profumo nuovo."
                 ],
-                // Risposte per domande sul lavoro
                 work: [
                     "Il successo è dietro l'angolo, ma l'angolo è molto lungo.",
                     "Le stelle dicono: fai finta di sapere quello che fai.",
@@ -987,7 +983,6 @@
                     "Le stelle dicono: il lunedì è sempre cattivo, non è colpa tua.",
                     "Il karma lavorativo dice: oggi fingi finché non ce la fai."
                 ],
-                // Risposte per domande sui soldi
                 money: [
                     "I soldi non fanno la felicità, ma le bollette sì la tristezza.",
                     "Le stelle vedono un guadagno... di esperienza. Poco spendibile.",
@@ -1000,7 +995,6 @@
                     "I soldi vanno e vengono, principalmente vanno.",
                     "Le stelle consigliano: investi in cioccolata, è sempre un buon affare."
                 ],
-                // Risposte per domande sulla salute
                 health: [
                     "Il corpo è un tempio, oggi concedigli un giorno di riposo.",
                     "Le stelle dicono: muoviti, ma non troppo.",
@@ -1013,7 +1007,6 @@
                     "Le stelle dicono: il divano è amico, non complice.",
                     "Il karma salutare consiglia: un passo alla volta, anche verso il frigo."
                 ],
-                // Risposte generiche/ironiche
                 generic: [
                     "La risposta è dentro di te, ma è ben nascosta.",
                     "Le stelle dicono: dipende. Utile, vero?",
@@ -1182,7 +1175,7 @@
             it: {
                 settings: "Impostazioni",
                 closeHint: "Si chiude tra 10s",
-                closing: " A domani! <br><span style='font-size: 2.2rem;'> 🙏 </span>",
+                closing: " A domani! <br><span style='font-size: 2.2rem;'> 🙏</span>",
                 todayIs: "Oggi è ",
                 fortuneMsg: "🎰 Oggi tenta la fortuna,<br>ecco i miei numeri fortunati:",
                 saturday: "Sabato",
@@ -1209,6 +1202,12 @@
 
         // Gestione lingua
         let currentLang = localStorage.getItem('app_language') || 'it';
+
+        // VARIABILI PER IL TIMER DI CHIUSURA (NUOVE)
+        let closeTimerId = null;
+        let isOracleActive = false;
+        const CLOSE_DELAY_DEFAULT = 10000;  // 10 secondi default
+        const CLOSE_DELAY_AFTER_ANSWER = 5000;  // 5 secondi dopo risposta
 
         function getTodayString() {
             return new Date().toISOString().split('T')[0];
@@ -1371,8 +1370,47 @@
             return html;
         }
 
+        // GESTIONE TIMER DI CHIUSURA (NUOVO)
+        function startCloseTimer(delay) {
+            // Cancella timer precedente se esiste
+            if (closeTimerId) {
+                clearTimeout(closeTimerId);
+            }
+            
+            // Non avviare se l'oracolo è attivo
+            if (isOracleActive) {
+                return;
+            }
+            
+            closeTimerId = setTimeout(() => {
+                closeApp();
+            }, delay);
+        }
+
+        function cancelCloseTimer() {
+            if (closeTimerId) {
+                clearTimeout(closeTimerId);
+                closeTimerId = null;
+            }
+        }
+
+        function closeApp() {
+            document.getElementById('closingScreen').classList.add('active');
+        }
+
+        function resetCloseTimerAfterAnswer() {
+            // Chiude 5 secondi dopo la risposta
+            startCloseTimer(CLOSE_DELAY_AFTER_ANSWER);
+        }
+
         // FUNZIONI ORACOLO
         function showOracleInput() {
+            // Segna che l'oracolo è stato attivato
+            isOracleActive = true;
+            
+            // Cancella il timer di chiusura automatica
+            cancelCloseTimer();
+            
             const container = document.getElementById('oracleInputContainer');
             const prompt = document.getElementById('oraclePrompt');
             const input = document.getElementById('oracleInput');
@@ -1408,7 +1446,8 @@
             
             // Seleziona risposta basata su hash della domanda per consistenza
             let hash = 0;
-            for (let i = 0; i < question.length; i++) {                hash = ((hash << 5) - hash) + question.charCodeAt(i);
+            for (let i = 0; i < question.length; i++) {
+                hash = ((hash << 5) - hash) + question.charCodeAt(i);
                 hash = hash & hash;
             }
             
@@ -1479,14 +1518,20 @@
                 const responseRect = responseDiv.getBoundingClientRect();
                 createMagicParticles(responseRect.left + responseRect.width/2, responseRect.top);
                 
+                // AVVIA TIMER DI CHIUSURA 5 SECONDI DOPO LA RISPOSTA
+                resetCloseTimerAfterAnswer();
+                
                 // Aggiungi bottone per nuova domanda dopo 3 secondi
                 setTimeout(() => {
-                    const askAgainBtn = document.createElement('button');
-                    askAgainBtn.className = 'oracle-submit';
-                    askAgainBtn.style.marginTop = '15px';
-                    askAgainBtn.innerHTML = `<span>${translations[currentLang].askAgain}</span>`;
-                    askAgainBtn.onclick = resetOracle;
-                    responseDiv.appendChild(askAgainBtn);
+                    // Verifica che il bottone non esista già
+                    if (!responseDiv.querySelector('.ask-again-btn')) {
+                        const askAgainBtn = document.createElement('button');
+                        askAgainBtn.className = 'oracle-submit ask-again-btn';
+                        askAgainBtn.style.marginTop = '15px';
+                        askAgainBtn.innerHTML = `<span>${translations[currentLang].askAgain}</span>`;
+                        askAgainBtn.onclick = resetOracle;
+                        responseDiv.appendChild(askAgainBtn);
+                    }
                 }, 3000);
                 
             }, meditationTime);
@@ -1506,9 +1551,12 @@
             input.value = '';
             prompt.style.display = 'inline-flex';
             
-            // Rimuovi effetto mistico
-            document.getElementById('skyContainer').classList.remove('mystic');
-            document.getElementById('sageImage').classList.remove('mystic');
+            // Se si fa una nuova domanda, annulla il timer e aspetta la nuova risposta
+            cancelCloseTimer();
+            
+            // Rimuovi effetto mistico (opzionale - togli commento se vuoi tornare normale)
+            // document.getElementById('skyContainer').classList.remove('mystic');
+            // document.getElementById('sageImage').classList.remove('mystic');
         }
 
         // Gestione tasto Invio nell'oracolo
@@ -1562,22 +1610,21 @@
                     // Mostra sezione oracolo dopo la frase
                     setTimeout(() => {
                         oracleSection.classList.add('visible');
+                        
+                        // AVVIA TIMER DI CHIUSURA SOLO DOPO che tutto è apparso
+                        // e solo se l'oracolo non è stato attivato
+                        startCloseTimer(CLOSE_DELAY_DEFAULT);
+                        
                     }, 1000);
                     
                 }, 800);
             }, 2500);
         }
 
-        function scheduleClose() {
-            setTimeout(() => {
-                document.getElementById('closingScreen').classList.add('active');
-            }, 10000);
-        }
-
         // Init
         window.addEventListener('load', () => {
             startAnimation();
-            scheduleClose();
+            // scheduleClose() rimosso - ora parte dopo l'animazione
         });
 
         // Previene zoom
