@@ -1517,10 +1517,7 @@
                 // Crea particelle dalla risposta
                 const responseRect = responseDiv.getBoundingClientRect();
                 createMagicParticles(responseRect.left + responseRect.width/2, responseRect.top);
-                
-                // AVVIA TIMER DI CHIUSURA 5 SECONDI DOPO LA RISPOSTA
-                resetCloseTimerAfterAnswer();
-                
+                               
                 // Aggiungi bottone per nuova domanda dopo 3 secondi
                 setTimeout(() => {
                     // Verifica che il bottone non esista già
@@ -1531,8 +1528,13 @@
                         askAgainBtn.innerHTML = `<span>${translations[currentLang].askAgain}</span>`;
                         askAgainBtn.onclick = resetOracle;
                         responseDiv.appendChild(askAgainBtn);
+
+                       // AVVIA TIMER DI CHIUSURA SOLO DOPO che il bottone è apparso
+                       // Dà 5 secondi all'utente per decidere se fare un'altra domanda
+                        resetCloseTimerAfterAnswer();
                     }
                 }, 3000);
+                
                 
             }, meditationTime);
         }
