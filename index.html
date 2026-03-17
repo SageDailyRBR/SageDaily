@@ -35,6 +35,11 @@
             background: linear-gradient(to bottom, #4A90E2 0%, #87CEEB 50%, #E0F6FF 100%);
             overflow: hidden;
             z-index: 1;
+            transition: all 1s ease;
+        }
+        
+        .sky-container.mystic {
+            background: linear-gradient(to bottom, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
         }
         
         .cloud {
@@ -43,6 +48,12 @@
             border-radius: 100px;
             opacity: 0.9;
             animation: floatUp linear infinite;
+            transition: all 1s ease;
+        }
+        
+        .sky-container.mystic .cloud {
+            background: rgba(147, 112, 219, 0.3);
+            opacity: 0.6;
         }
         
         .cloud::before, .cloud::after {
@@ -50,6 +61,12 @@
             position: absolute;
             background: rgba(255, 255, 255, 0.8);
             border-radius: 100px;
+            transition: all 1s ease;
+        }
+        
+        .sky-container.mystic .cloud::before,
+        .sky-container.mystic .cloud::after {
+            background: rgba(147, 112, 219, 0.3);
         }
         
         @keyframes floatUp {
@@ -255,6 +272,12 @@
             margin-bottom: 30px;
             opacity: 0;
             animation-fill-mode: forwards;
+            transition: all 0.5s ease;
+        }
+        
+        .sage-image.mystic {
+            filter: drop-shadow(0 10px 30px rgba(147, 112, 219, 0.6)) brightness(1.1);
+            animation: gentleFloatMystic 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
         }
         
         @keyframes fadeInScale {
@@ -276,6 +299,16 @@
             50% { transform: translateY(-8px); }
         }
         
+        @keyframes gentleFloatMystic {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 10px 30px rgba(147, 112, 219, 0.6)) brightness(1.1); }
+            50% { filter: drop-shadow(0 15px 40px rgba(147, 112, 219, 0.8)) brightness(1.3); }
+        }
+        
         .text-container {
             min-height: 140px;
             display: flex;
@@ -284,6 +317,7 @@
             position: relative;
             text-align: center;
             max-width: 90vw;
+            flex-direction: column;
         }
         
         .date-text {
@@ -417,6 +451,227 @@
             50% { transform: scale(1.05); }
         }
         
+        /* SEZIONE DOMANDA ORACOLO */
+        .oracle-section {
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .oracle-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .oracle-prompt {
+            font-family: 'Sniglet', cursive;
+            font-size: 1.4rem;
+            color: #2C3E50;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .oracle-prompt:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,1);
+        }
+        
+        .oracle-prompt::before {
+            content: '🔮';
+            font-size: 1.6rem;
+            animation: crystalPulse 2s infinite;
+        }
+        
+        @keyframes crystalPulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.2); filter: brightness(1.3); }
+        }
+        
+        .oracle-input-container {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            animation: expandIn 0.5s ease;
+        }
+        
+        .oracle-input-container.active {
+            display: flex;
+        }
+        
+        @keyframes expandIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .oracle-input {
+            font-family: 'Gochi Hand', cursive;
+            font-size: 1.3rem;
+            padding: 15px 20px;
+            border: 3px solid rgba(255,255,255,0.8);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.95);
+            color: #2C3E50;
+            outline: none;
+            resize: none;
+            min-height: 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .oracle-input:focus {
+            border-color: #9C27B0;
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .oracle-submit {
+            font-family: 'Sniglet', cursive;
+            font-size: 1.2rem;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #9C27B0, #E91E63);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+            transition: all 0.3s ease;
+            align-self: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .oracle-submit:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.6);
+        }
+        
+        .oracle-submit:active {
+            transform: scale(0.95);
+        }
+        
+        .oracle-submit::after {
+            content: '✨';
+        }
+        
+        /* Risposta Oracolo */
+        .oracle-response {
+            display: none;
+            margin-top: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.95), rgba(233, 30, 99, 0.95));
+            border-radius: 20px;
+            color: white;
+            font-family: 'Gochi Hand', cursive;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(156, 39, 176, 0.4), inset 0 0 20px rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            animation: mysticalAppear 1s ease;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .oracle-response.active {
+            display: block;
+        }
+        
+        @keyframes mysticalAppear {
+            0% { opacity: 0; transform: scale(0.8) rotate(-3deg); filter: blur(10px); }
+            50% { transform: scale(1.02) rotate(1deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+        }
+        
+        .oracle-response::before {
+            content: '🔮';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .oracle-response-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .oracle-mist {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: mistMove 3s ease-in-out;
+        }
+        
+        @keyframes mistMove {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .thinking-dots {
+            display: none;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .thinking-dots.active {
+            display: flex;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            background: #9C27B0;
+            border-radius: 50%;
+            animation: dotPulse 1.4s infinite ease-in-out both;
+        }
+        
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes dotPulse {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Effetti particelle magiche */
+        .magic-particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            animation: particleFloat 2s ease-out forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes particleFloat {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+        
         .close-timer {
             position: fixed;
             bottom: 20px;
@@ -486,7 +741,7 @@
 </head>
 <body>
     <!-- Cielo -->
-    <div class="sky-container">
+    <div class="sky-container" id="skyContainer">
         <div class="cloud cloud1"></div>
         <div class="cloud cloud2"></div>
         <div class="cloud cloud3"></div>
@@ -532,6 +787,36 @@
         <div class="text-container">
             <div id="dateDisplay" class="date-text"></div>
             <div id="quoteDisplay" class="quote-text"></div>
+            
+            <!-- Sezione Oracolo -->
+            <div class="oracle-section" id="oracleSection">
+                <div class="oracle-prompt" id="oraclePrompt" onclick="showOracleInput()">
+                    <span id="oraclePromptText">Hai una domanda per il saggio?</span>
+                </div>
+                
+                <div class="oracle-input-container" id="oracleInputContainer">
+                    <textarea 
+                        class="oracle-input" 
+                        id="oracleInput" 
+                        placeholder=""
+                        maxlength="200"
+                    ></textarea>
+                    <button class="oracle-submit" id="oracleSubmit" onclick="askOracle()">
+                        <span id="submitText">Chiedi all'universo</span>
+                    </button>
+                </div>
+                
+                <div class="thinking-dots" id="thinkingDots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                
+                <div class="oracle-response" id="oracleResponse">
+                    <div class="oracle-mist"></div>
+                    <div class="oracle-response-text" id="oracleResponseText"></div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -541,7 +826,7 @@
     
     <!-- Schermo chiusura -->
     <div class="closing-screen" id="closingScreen">
-        <div class="closing-text" id="closingText">A domani!<br><span style="font-size: 2.2rem;">🙏</span></div>
+        <div class="closing-text" id="closingText"> A domani! <br><span style="font-size: 2.2rem;"> 🙏 </span></div>
     </div>
 
     <script>
@@ -645,28 +930,250 @@
             ]
         };
 
-        // Statistiche SuperEnalotto (aggiornate a marzo 2026)
-        // Decine più ricorrenti basate sui numeri più frequenti
-        const superEnalottoStats = {
-            // Decine più ricorrenti (80-89, 40-49, 60-69 sono le più calde)
-            hotRanges: [
-                { min: 80, max: 89, weight: 3 }, // Decina 80-89 molto frequente
-                { min: 40, max: 49, weight: 3 }, // Decina 40-49 molto frequente  
-                { min: 60, max: 69, weight: 2 }, // Decina 60-69 frequente
-                { min: 50, max: 59, weight: 2 }, // Decina 50-59 frequente
-                { min: 70, max: 79, weight: 1 }  // Decina 70-79 moderata
-            ],
-            // Numeri specifici più frequenti per decina
-            hotNumbers: {
-                80: [80, 81, 83, 85, 86, 88, 82], // 85(319), 86(308), 83(306), 80(305), 81(305), 88(294), 82(299)
-                40: [49, 45, 43, 48, 41, 40],     // 49(309), 45(297), 43(288), 48(282), 41(289), 40(286)
-                60: [68, 66, 65, 63, 62, 69],     // 68(298), 66(292), 65(292), 63(290), 62(289), 69(287)
-                50: [55, 52, 56, 51],             // 55(305), 52(302), 56(288), 51(289)
-                70: [79, 77, 75]                  // 79(307), 77(301), 75(290)
+        // Database Oracolo - Risposte mistiche/ironiche/ambighe
+        const oracleDB = {
+            it: {
+                // Risposte per domande sì/no
+                yesNo: [
+                    "Le stelle dicono di sì... ma potrebbero essere confuse.",
+                    "L'universo annuisce, ma non garantisce nulla.",
+                    "Le nuvole si stanno diradando verso il sì, porta un ombrello comunque.",
+                    "Il karma dice sì, il destino dice forse. Tu scegli.",
+                    "Le carte dicono di sì, ma sono state mescolate male.",
+                    "La risposta è sì, ma in una dimensione parallela.",
+                    "Il saggio sente un 'sì'... eco di un 'no' lontano.",
+                    "Le stelle dicono di no... ma sono capricciose oggi.",
+                    "L'universo scrolla le spalle. Interpreta come preferisci.",
+                    "Il destino dice no, ma è noto per i cambi di idea.",
+                    "Le nuvole coprono la risposta. Riprova dopo il caffè.",
+                    "Il karma è indeciso. Anche lui ha le sue giornate."
+                ],
+                // Risposte per domande sul futuro
+                future: [
+                    "Il futuro è come il meteo: tutti ne parlano, nessuno lo sa davvero.",
+                    "Vedo grandi cose... o forse è solo la mia vista che peggiora.",
+                    "Il tempo rivelerà tutto, o forse no. È imprevedibile anche lui.",
+                    "Le stelle si stanno allineando... lentamente, molto lentamente.",
+                    "Il destino sta scrivendo la tua storia, ma usa l'autocorrettore.",
+                    "Vedo un domani luminoso, potrebbe essere solo il tramonto però.",
+                    "Il futuro bussa, ma potrebbe essere il postino.",
+                    "Le carte mostrano possibilità infinite, scegli quella meno peggiore.",
+                    "Il tempo è un cerchio, ma tu stai andando in tangenziale.",
+                    "Il destino ha piani per te, ma non li ha condivisi con me."
+                ],
+                // Risposte per domande sull'amore
+                love: [
+                    "Il cuore ha le sue ragioni che il saggio non capisce affatto.",
+                    "L'amore è nell'aria... o forse è solo polline.",
+                    "Le stelle consigliano: sii te stesso, ma meglio.",
+                    "Il karma amoroso è complicato, come le istruzioni dell'IKEA.",
+                    "Vedo cuori... potrebbero essere solo emoji però.",
+                    "L'universo sussurra: il vero amore è il gelato.",
+                    "Le carte dicono: chi cerca trova, chi aspetta si annoia.",
+                    "Il destino amoroso è un labirinto, portati il filo di Arianna.",
+                    "L'amore arriva quando smetti di cercarlo, o quando apri il frigo.",
+                    "Le stelle consigliano pazienza, ma anche un profumo nuovo."
+                ],
+                // Risposte per domande sul lavoro
+                work: [
+                    "Il successo è dietro l'angolo, ma l'angolo è molto lungo.",
+                    "Le stelle dicono: fai finta di sapere quello che fai.",
+                    "Il karma lavorativo premia chi arriva tardi ma con il caffè per tutti.",
+                    "Vedo una promozione... nel tuo account dei sogni.",
+                    "L'universo consiglia: salva il documento spesso.",
+                    "Il destino professionale è come una stampante, si blocca nei momenti cruciali.",
+                    "Le carte mostrano: duro lavoro, o fortuna sfacciata. Scegli tu.",
+                    "Il successo arriva a chi aspetta, ma più veloce a chi agisce.",
+                    "Le stelle dicono: il lunedì è sempre cattivo, non è colpa tua.",
+                    "Il karma lavorativo dice: oggi fingi finché non ce la fai."
+                ],
+                // Risposte per domande sui soldi
+                money: [
+                    "I soldi non fanno la felicità, ma le bollette sì la tristezza.",
+                    "Le stelle vedono un guadagno... di esperienza. Poco spendibile.",
+                    "Il denaro arriverà, forse come rimborso, forse come trovata.",
+                    "L'universo consiglia: controlla sotto i cuscini del divano.",
+                    "Il karma finanziario è imprevedibile come il mercato azionario.",
+                    "Vedo ricchezza... di amicizie. I contanti sono scarsi.",
+                    "Le carte dicono: risparmia, ma compra anche quella cosa.",
+                    "Il destino economico dice: il meglio è nemico del bene in saldo.",
+                    "I soldi vanno e vengono, principalmente vanno.",
+                    "Le stelle consigliano: investi in cioccolata, è sempre un buon affare."
+                ],
+                // Risposte per domande sulla salute
+                health: [
+                    "Il corpo è un tempio, oggi concedigli un giorno di riposo.",
+                    "Le stelle dicono: muoviti, ma non troppo.",
+                    "Il karma suggerisce: verdura sì, ma anche quella fritta.",
+                    "La salute è ricchezza, ma il sonno è oro.",
+                    "L'universo consiglia: ascolta il tuo corpo, sta mormorando.",
+                    "Il destino della salute dice: prevenire è meglio, ma procrastinare è più facile.",
+                    "Le carte mostrano energia... dopo il caffè delle tre.",
+                    "Il benessere arriva a chi aspetta, e a chi fa stretching.",
+                    "Le stelle dicono: il divano è amico, non complice.",
+                    "Il karma salutare consiglia: un passo alla volta, anche verso il frigo."
+                ],
+                // Risposte generiche/ironiche
+                generic: [
+                    "La risposta è dentro di te, ma è ben nascosta.",
+                    "Le stelle dicono: dipende. Utile, vero?",
+                    "L'universo sussurra: chiedi di nuovo dopo pranzo.",
+                    "Il destino ha un piano, ma non ha condiviso l'agenda.",
+                    "Le nuvole della saggezza sono... un po' fosche oggi.",
+                    "Il karma dice: forse sì, forse no, forse boh.",
+                    "La verità è là fuori, ma ha cambiato indirizzo.",
+                    "Le carte sono confuse, come tutti noi il lunedì.",
+                    "Il saggio sente che... ha dimenticato la domanda.",
+                    "L'oracolo risponde: 42. Sai già cosa significa?",
+                    "Le stelle si stanno consultando, riprova tra un'era geologica.",
+                    "L'universo dice: la risposta è il viaggio, non la destinazione. Comodo, eh?",
+                    "Il destino suggerisce: gira a sinistra al prossimo dubbio.",
+                    "Le nuvole rivelano: tutto è possibile, poco è probabile.",
+                    "Il karma mormora: fai ciò che devi, poi vedi che succede.",
+                    "La saggezza antica dice: chi domanda erra, chi non domanda... dorme meglio.",
+                    "L'oracolo vede... un bello sfocato. Metti gli occhiali.",
+                    "Le stelle consigliano: quando in dubbio, ordina la pizza.",
+                    "Il futuro è come un gatto: se lo insegui scappa, se ignori ti si siede in grembo.",
+                    "L'universo dice: la risposta è semplice, tu la stai complicando."
+                ]
             },
-            // Numeri SuperStar meno frequenti nelle decine calde (per la logica richiesta)
+            en: {
+                yesNo: [
+                    "The stars say yes... but they might be confused.",
+                    "The universe nods, but guarantees nothing.",
+                    "Clouds are clearing toward yes, bring an umbrella anyway.",
+                    "Karma says yes, destiny says maybe. You choose.",
+                    "The cards say yes, but they were shuffled poorly.",
+                    "The answer is yes, but in a parallel dimension.",
+                    "The sage hears a 'yes'... echo of a distant 'no'.",
+                    "The stars say no... but they're capricious today.",
+                    "The universe shrugs. Interpret as you wish.",
+                    "Destiny says no, but it's known for changing its mind.",
+                    "Clouds cover the answer. Try again after coffee.",
+                    "Karma is undecided. Even he has his days."
+                ],
+                future: [
+                    "The future is like the weather: everyone talks about it, nobody really knows.",
+                    "I see great things... or maybe my eyesight is just getting worse.",
+                    "Time will reveal all, or maybe not. It's unpredictable too.",
+                    "The stars are aligning... slowly, very slowly.",
+                    "Destiny is writing your story, but uses autocorrect.",
+                    "I see a bright tomorrow, might just be the sunset though.",
+                    "The future knocks, but it might be the mailman.",
+                    "The cards show infinite possibilities, pick the least worst.",
+                    "Time is a circle, but you're going off on a tangent.",
+                    "Destiny has plans for you, but didn't share them with me."
+                ],
+                love: [
+                    "The heart has its reasons that the sage doesn't understand at all.",
+                    "Love is in the air... or maybe it's just pollen.",
+                    "The stars advise: be yourself, but better.",
+                    "Love karma is complicated, like IKEA instructions.",
+                    "I see hearts... might just be emojis though.",
+                    "The universe whispers: true love is ice cream.",
+                    "The cards say: who seeks finds, who waits gets bored.",
+                    "Love destiny is a labyrinth, bring Ariadne's thread.",
+                    "Love arrives when you stop looking, or when you open the fridge.",
+                    "The stars advise patience, but also a new perfume."
+                ],
+                work: [
+                    "Success is around the corner, but the corner is very long.",
+                    "The stars say: pretend you know what you're doing.",
+                    "Work karma rewards those who arrive late but with coffee for everyone.",
+                    "I see a promotion... in your dream account.",
+                    "The universe advises: save the document often.",
+                    "Professional destiny is like a printer, it jams at crucial moments.",
+                    "The cards show: hard work, or shameless luck. You choose.",
+                    "Success comes to those who wait, but faster to those who act.",
+                    "The stars say: Monday is always bad, not your fault.",
+                    "Work karma says: fake it till you make it."
+                ],
+                money: [
+                    "Money doesn't buy happiness, but bills do buy sadness.",
+                    "The stars see a gain... of experience. Hardly spendable.",
+                    "Money will come, maybe as a refund, maybe as a find.",
+                    "The universe advises: check under the couch cushions.",
+                    "Financial karma is as unpredictable as the stock market.",
+                    "I see wealth... of friendships. Cash is scarce.",
+                    "The cards say: save, but also buy that thing.",
+                    "Economic destiny says: the best is the enemy of the good on sale.",
+                    "Money comes and goes, mainly goes.",
+                    "The stars advise: invest in chocolate, it's always a good deal."
+                ],
+                health: [
+                    "The body is a temple, give it a rest day today.",
+                    "The stars say: move, but not too much.",
+                    "Karma suggests: vegetables yes, but also fried ones.",
+                    "Health is wealth, but sleep is gold.",
+                    "The universe advises: listen to your body, it's murmuring.",
+                    "Health destiny says: prevention is better, but procrastination is easier.",
+                    "The cards show energy... after the three o'clock coffee.",
+                    "Wellness comes to those who wait, and those who stretch.",
+                    "The stars say: the couch is a friend, not an accomplice.",
+                    "Health karma advises: one step at a time, even toward the fridge."
+                ],
+                generic: [
+                    "The answer is inside you, but well hidden.",
+                    "The stars say: it depends. Useful, right?",
+                    "The universe whispers: ask again after lunch.",
+                    "Destiny has a plan, but hasn't shared the calendar.",
+                    "The clouds of wisdom are... a bit foggy today.",
+                    "Karma says: maybe yes, maybe no, maybe dunno.",
+                    "The truth is out there, but changed address.",
+                    "The cards are confused, like all of us on Monday.",
+                    "The sage senses that... forgot the question.",
+                    "The oracle answers: 42. You already know what it means?",
+                    "The stars are consulting, try again in a geological era.",
+                    "The universe says: the answer is the journey, not the destination. Convenient, huh?",
+                    "Destiny suggests: turn left at the next doubt.",
+                    "Clouds reveal: everything is possible, little is probable.",
+                    "Karma murmurs: do what you must, then see what happens.",
+                    "Ancient wisdom says: who asks errs, who doesn't ask... sleeps better.",
+                    "The oracle sees... a nice blur. Put your glasses on.",
+                    "The stars advise: when in doubt, order pizza.",
+                    "The future is like a cat: if you chase it it runs, if you ignore it sits in your lap.",
+                    "The universe says: the answer is simple, you're complicating it."
+                ]
+            }
+        };
+
+        // Parole chiave per categorizzare le domande
+        const questionKeywords = {
+            it: {
+                yesNo: ['sarà', 'sara', 'saranno', 'and', 'andrà', 'andra', 'succederà', 'succedera', 'posso', 'potrò', 'potro', 'devo', 'dovrò', 'dovro', 'è vero', 'e vero', 'giusto', 'corretto', 'conviene', 'vale', 'dovrei', 'potrei'],
+                future: ['futuro', 'domani', 'prossimo', 'anno', 'mese', 'settimana', 'diventerò', 'diventero', 'sarò', 'saro', 'accadrà', 'accadra', 'destino', 'futura'],
+                love: ['amore', 'innamorato', 'innamorata', 'lui', 'lei', 'ragazzo', 'ragazza', 'marito', 'moglie', 'fidanzato', 'fidanzata', 'tinder', 'cuore', 'bacio', 'relazione', 'single', 'coniuge'],
+                work: ['lavoro', 'lavorare', 'ufficio', 'capo', 'collega', 'promozione', 'aumento', 'carriera', 'impiego', 'azienda', 'business', 'cliente', 'progetto', 'licenziare', 'assumere'],
+                money: ['soldi', 'denaro', 'ricchezza', 'povertà', 'lotto', 'lotteria', 'vincita', 'investimento', 'banca', 'conto', 'salario', 'stipendio', 'guadagno', 'perdita', 'economia'],
+                health: ['salute', 'malattia', 'malato', 'dottore', 'medico', 'ospedale', 'dieta', 'peso', 'gym', 'palestra', 'sport', 'correre', 'salute', 'benessere', 'stress', 'ansia']
+            },
+            en: {
+                yesNo: ['will', 'shall', 'should', 'would', 'could', 'can', 'may', 'might', 'is it true', 'correct', 'right', 'wrong', 'good idea', 'bad idea'],
+                future: ['future', 'tomorrow', 'next', 'year', 'month', 'week', 'become', 'will be', 'happen', 'destiny', 'coming'],
+                love: ['love', 'crush', 'boyfriend', 'girlfriend', 'husband', 'wife', 'dating', 'tinder', 'heart', 'kiss', 'relationship', 'single', 'marriage', 'romance'],
+                work: ['work', 'job', 'office', 'boss', 'colleague', 'promotion', 'raise', 'career', 'employment', 'company', 'business', 'client', 'project', 'fire', 'hire'],
+                money: ['money', 'cash', 'wealth', 'rich', 'poor', 'lottery', 'win', 'investment', 'bank', 'account', 'salary', 'income', 'loss', 'economy', 'finance'],
+                health: ['health', 'sick', 'illness', 'doctor', 'hospital', 'diet', 'weight', 'gym', 'sport', 'run', 'wellness', 'stress', 'anxiety', 'fitness']
+            }
+        };
+
+        // Statistiche SuperEnalotto (aggiornate a marzo 2026)
+        const superEnalottoStats = {
+            hotRanges: [
+                { min: 80, max: 89, weight: 3 },
+                { min: 40, max: 49, weight: 3 },
+                { min: 60, max: 69, weight: 2 },
+                { min: 50, max: 59, weight: 2 },
+                { min: 70, max: 79, weight: 1 }
+            ],
+            hotNumbers: {
+                80: [80, 81, 83, 85, 86, 88, 82],
+                40: [49, 45, 43, 48, 41, 40],
+                60: [68, 66, 65, 63, 62, 69],
+                50: [55, 52, 56, 51],
+                70: [79, 77, 75]
+            },
             superstarCold: [87, 33, 38, 30, 34, 55, 54, 60, 81, 19, 28, 41],
-            // Numeri SuperStar più frequenti (backup)
             superstarHot: [49, 51, 80, 11, 5, 52, 44, 45]
         };
 
@@ -675,18 +1182,28 @@
             it: {
                 settings: "Impostazioni",
                 closeHint: "Si chiude tra 10s",
-                closing: "A domani!<br><span style='font-size: 2.2rem;'>🙏</span>",
+                closing: " A domani! <br><span style='font-size: 2.2rem;'> 🙏 </span>",
                 todayIs: "Oggi è ",
                 fortuneMsg: "🎰 Oggi tenta la fortuna,<br>ecco i miei numeri fortunati:",
-                saturday: "Sabato"
+                saturday: "Sabato",
+                oraclePrompt: "Hai una domanda per il saggio?",
+                oraclePlaceholder: "Scrivi qui la tua domanda... (max 200 caratteri)",
+                submitText: "Chiedi all'universo",
+                thinking: "L'oracolo sta meditando...",
+                askAgain: "Fai un'altra domanda"
             },
             en: {
                 settings: "Settings",
                 closeHint: "Closes in 10s",
-                closing: "See you tomorrow!<br><span style='font-size: 2.2rem;'>🙏</span>",
+                closing: " See you tomorrow! <br><span style='font-size: 2.2rem;'> 🙏 </span>",
                 todayIs: "Today is ",
                 fortuneMsg: "🎰 Try your luck today,<br>here are my lucky numbers:",
-                saturday: "Saturday"
+                saturday: "Saturday",
+                oraclePrompt: "Have a question for the sage?",
+                oraclePlaceholder: "Type your question here... (max 200 chars)",
+                submitText: "Ask the universe",
+                thinking: "The oracle is meditating...",
+                askAgain: "Ask another question"
             }
         };
 
@@ -718,19 +1235,15 @@
             const numbers = [];
             const stats = superEnalottoStats;
             
-            // Seleziona 2 numeri dalla decina 80-89 (la più calda)
             const range80 = stats.hotNumbers[80];
             numbers.push(...weightedRandom(range80, 2));
             
-            // Seleziona 2 numeri dalla decina 40-49 (molto calda)
             const range40 = stats.hotNumbers[40];
             numbers.push(...weightedRandom(range40, 2));
             
-            // Seleziona 1 numero dalla decina 60-69
             const range60 = stats.hotNumbers[60];
             numbers.push(...weightedRandom(range60, 1));
             
-            // Seleziona 1 numero dalla decina 50-59 o 70-79
             const remainingRanges = [stats.hotNumbers[50], stats.hotNumbers[70]].flat();
             numbers.push(...weightedRandom(remainingRanges, 1));
             
@@ -739,7 +1252,6 @@
 
         // Genera il numero SuperStar dalle decine ricorrenti ma meno estratto
         function generateSuperStar() {
-            // Prende dai numeri meno frequenti (cold) che sono nelle decine calde
             const coldInHotRanges = superEnalottoStats.superstarCold.filter(n => 
                 (n >= 80 && n <= 89) || (n >= 40 && n <= 49) || (n >= 60 && n <= 69)
             );
@@ -748,7 +1260,6 @@
                 return coldInHotRanges[Math.floor(Math.random() * coldInHotRanges.length)];
             }
             
-            // Fallback: prende un numero casuale dai meno frequenti
             return superEnalottoStats.superstarCold[
                 Math.floor(Math.random() * superEnalottoStats.superstarCold.length)
             ];
@@ -773,7 +1284,6 @@
         }
 
         function getQuoteForToday() {
-            // Se è sabato, restituisce null per indicare che deve mostrare la fortuna
             if (isSaturday()) {
                 return null;
             }
@@ -851,17 +1361,168 @@
             let html = `<div class="fortune-text">${t.fortuneMsg}</div>`;
             html += '<div class="lottery-numbers">';
             
-            // 6 numeri principali
             fortune.numbers.forEach(num => {
                 html += `<div class="lottery-ball">${num}</div>`;
             });
             
-            // Numero SuperStar
             html += `<div class="lottery-ball superstar-ball">${fortune.superstar}</div>`;
             html += '</div>';
             
             return html;
         }
+
+        // FUNZIONI ORACOLO
+        function showOracleInput() {
+            const container = document.getElementById('oracleInputContainer');
+            const prompt = document.getElementById('oraclePrompt');
+            const input = document.getElementById('oracleInput');
+            
+            container.classList.add('active');
+            prompt.style.display = 'none';
+            
+            // Attiva effetto mistico
+            document.getElementById('skyContainer').classList.add('mystic');
+            document.getElementById('sageImage').classList.add('mystic');
+            
+            setTimeout(() => input.focus(), 300);
+        }
+
+        function analyzeQuestion(question) {
+            const lowerQ = question.toLowerCase();
+            const keywords = questionKeywords[currentLang];
+            
+            // Controlla categorie in ordine di priorità
+            if (keywords.yesNo.some(k => lowerQ.includes(k))) return 'yesNo';
+            if (keywords.love.some(k => lowerQ.includes(k))) return 'love';
+            if (keywords.money.some(k => lowerQ.includes(k))) return 'money';
+            if (keywords.work.some(k => lowerQ.includes(k))) return 'work';
+            if (keywords.health.some(k => lowerQ.includes(k))) return 'health';
+            if (keywords.future.some(k => lowerQ.includes(k))) return 'future';
+            
+            return 'generic';
+        }
+
+        function generateOracleResponse(question) {
+            const category = analyzeQuestion(question);
+            const responses = oracleDB[currentLang][category];
+            
+            // Seleziona risposta basata su hash della domanda per consistenza
+            let hash = 0;
+            for (let i = 0; i < question.length; i++) {                hash = ((hash << 5) - hash) + question.charCodeAt(i);
+                hash = hash & hash;
+            }
+            
+            const index = Math.abs(hash) % responses.length;
+            return responses[index];
+        }
+
+        function createMagicParticles(x, y) {
+            const colors = ['#FFD700', '#FF69B4', '#00CED1', '#9370DB', '#FF6347'];
+            const container = document.body;
+            
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'magic-particle';
+                particle.innerHTML = ['✨', '⭐', '🔮', '💫', '✦'][Math.floor(Math.random() * 5)];
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.fontSize = (15 + Math.random() * 20) + 'px';
+                particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                const angle = (Math.PI * 2 * i) / 12;
+                const distance = 50 + Math.random() * 100;
+                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                particle.style.animationDelay = (i * 0.05) + 's';
+                
+                container.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        function askOracle() {
+            const input = document.getElementById('oracleInput');
+            const question = input.value.trim();
+            
+            if (!question) {
+                input.style.borderColor = '#ff4444';
+                setTimeout(() => {
+                    input.style.borderColor = '';
+                }, 1000);
+                return;
+            }
+            
+            // Nascondi input e mostra "pensiero"
+            document.getElementById('oracleInputContainer').classList.remove('active');
+            document.getElementById('thinkingDots').classList.add('active');
+            
+            // Crea particelle magiche dal bottone
+            const button = document.getElementById('oracleSubmit');
+            const rect = button.getBoundingClientRect();
+            createMagicParticles(rect.left + rect.width/2, rect.top + rect.height/2);
+            
+            // Simula meditazione dell'oracolo (2-4 secondi casuali)
+            const meditationTime = 2000 + Math.random() * 2000;
+            
+            setTimeout(() => {
+                document.getElementById('thinkingDots').classList.remove('active');
+                
+                const response = generateOracleResponse(question);
+                const responseDiv = document.getElementById('oracleResponse');
+                const responseText = document.getElementById('oracleResponseText');
+                
+                responseText.textContent = response;
+                responseDiv.classList.add('active');
+                
+                // Crea particelle dalla risposta
+                const responseRect = responseDiv.getBoundingClientRect();
+                createMagicParticles(responseRect.left + responseRect.width/2, responseRect.top);
+                
+                // Aggiungi bottone per nuova domanda dopo 3 secondi
+                setTimeout(() => {
+                    const askAgainBtn = document.createElement('button');
+                    askAgainBtn.className = 'oracle-submit';
+                    askAgainBtn.style.marginTop = '15px';
+                    askAgainBtn.innerHTML = `<span>${translations[currentLang].askAgain}</span>`;
+                    askAgainBtn.onclick = resetOracle;
+                    responseDiv.appendChild(askAgainBtn);
+                }, 3000);
+                
+            }, meditationTime);
+        }
+
+        function resetOracle() {
+            const responseDiv = document.getElementById('oracleResponse');
+            const input = document.getElementById('oracleInput');
+            const prompt = document.getElementById('oraclePrompt');
+            
+            responseDiv.classList.remove('active');
+            responseDiv.innerHTML = `
+                <div class="oracle-mist"></div>
+                <div class="oracle-response-text" id="oracleResponseText"></div>
+            `;
+            
+            input.value = '';
+            prompt.style.display = 'inline-flex';
+            
+            // Rimuovi effetto mistico
+            document.getElementById('skyContainer').classList.remove('mystic');
+            document.getElementById('sageImage').classList.remove('mystic');
+        }
+
+        // Gestione tasto Invio nell'oracolo
+        document.addEventListener('DOMContentLoaded', () => {
+            const oracleInput = document.getElementById('oracleInput');
+            if (oracleInput) {
+                oracleInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        askOracle();
+                    }
+                });
+            }
+        });
 
         // Animazioni
         function startAnimation() {
@@ -869,8 +1530,14 @@
             document.getElementById('closeHint').textContent = t.closeHint;
             document.getElementById('closingText').innerHTML = t.closing;
             
+            // Aggiorna testi oracolo
+            document.getElementById('oraclePromptText').textContent = t.oraclePrompt;
+            document.getElementById('oracleInput').placeholder = t.oraclePlaceholder;
+            document.getElementById('submitText').textContent = t.submitText;
+            
             const dateDisplay = document.getElementById('dateDisplay');
             const quoteDisplay = document.getElementById('quoteDisplay');
+            const oracleSection = document.getElementById('oracleSection');
             
             dateDisplay.textContent = formatDate();
             
@@ -891,6 +1558,12 @@
                         quoteDisplay.textContent = quote;
                         quoteDisplay.classList.add('visible');
                     }
+                    
+                    // Mostra sezione oracolo dopo la frase
+                    setTimeout(() => {
+                        oracleSection.classList.add('visible');
+                    }, 1000);
+                    
                 }, 800);
             }, 2500);
         }
