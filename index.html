@@ -1262,54 +1262,46 @@
             return result.sort((a, b) => a - b);
         }
 
+        function getRandomCount(max, remainingTotal) {
+           return Math.floor(Math.random() * (Math.min(max, remainingTotal) + 1));
+        }
+
+        function generateMainRangeCounts() {
+           let remaining = 6;
+
+           const count80 = getRandomCount(3, remaining);
+           remaining -= count80;
+
+           const count40 = getRandomCount(3, remaining);
+           remaining -= count40;
+
+           const count30 = getRandomCount(3, remaining);
+           remaining -= count30;
+
+           return { count80, count40, count30, remaining };
+           }
+                
         // Genera i 6 numeri principali basati sulle decine più ricorrenti
-        function generateLuckyNumbers() {
-            const numbers = [];
-            const stats = superEnalottoStats;
-            
-            const range80 = stats.hotNumbers[80];
-            const range40 = stats.hotNumbers[40];
-            const range60 = stats.hotNumbers[60];
-            const range30 = stats.hotNumbers[30];
-            const remainingRanges = [stats.hotNumbers[50], stats.hotNumbers[20], stats.hotNumbers[0], stats.hotNumbers[10], stats.hotNumbers[70]].flat();
+        // 6) se dopo dedup manca ancora qualcosa, completa pescando da tutte le serie utili
+        const refillPool = [
+            ...range80,
+            ...range40,
+            ...range30,
+            ...range60,
+            ...remainingRanges
+        ];
 
-             // random da 0 a 3
-            const count80 = Math.floor(Math.random() * 4); // 0–3
-            const count40 = Math.floor(Math.random() * 4); // 0–3
-            const count30 = Math.floor(Math.random() * 4); // 0–3
+        while (uniqueNumbers.length < 6) {
+           const extra = weightedRandom(refillPool, 1)[0];
+           if (!uniqueNumbers.includes(extra)) {
+            uniqueNumbers.push(extra);
+           }
+        }
 
-            // aggiungi numeri
-            numbers.push(...weightedRandom(range80, count80));
-            numbers.push(...weightedRandom(range40, count40));
-            numbers.push(...weightedRandom(range30, count30));
-
-            // quanti ne mancano per arrivare a 6
-            let remaining = 6 - numbers.length;
-            
-            // aggiungi dalla serie 60 (max 1, solo se serve)
-            if (remaining > 0) {
-               const count60 = Math.min(1, remaining);
-               numbers.push(...weightedRandom(range60, count60));
-               remaining = 6 - numbers.length;
-            }
-
-            // riempi il resto con le altre serie
-            if (remaining > 0) {
-               numbers.push(...weightedRandom(remainingRanges, remaining));
-            }
-
-            // ⚠️ sicurezza: se per qualche motivo superi 6 (es. duplicati)
-            const uniqueNumbers = [...new Set(numbers)];
-
-            // se dopo dedup hai meno di 6, completa
-            while (uniqueNumbers.length < 6) {
-               const extra = weightedRandom(remainingRanges, 1)[0];
-               if (!uniqueNumbers.includes(extra)) {
-                   uniqueNumbers.push(extra);
-               }
-            }
-
-            return uniqueNumbers.sort((a, b) => a - b);
+        // 7) se per sicurezza fossero più di 6, taglia
+        return uniqueNumbers
+           .slice(0, 6)
+           .sort((a, b) => a - b);
         }
 
         // Genera il numero SuperStar dalle decine ricorrenti ma meno estratto
@@ -1388,16 +1380,19 @@
             const weekAgo = new Date();
             weekAgo.setDate(weekAgo.getDate() - 7);
             const weekAgoStr = weekAgo.toISOString().split('T')[0];
+
+            const keysToRemove = [];
             
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && (key.startsWith('quote_') || key.startsWith('fortune_'))) {
                     const datePart = key.split('_').pop();
                     if (datePart && datePart < weekAgoStr) {
-                        localStorage.removeItem(key);
+                        keysToRemove.push(key);
                     }
                 }
             }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
         }
 
         function formatDate() {
@@ -1683,8 +1678,14 @@
                     const quote = getQuoteForToday();
                     
                     if (quote === null) {
-                        // È sabato - mostra i numeri fortunati
-                        const fortune = getSaturdayFortune();
+                        let fortune;
+                        if (isSaturday()) {
+                            fortune = getSaturdayFortune();
+                        } else if (isThursday()) {
+                            fortune = getThursdayFortune();
+                        }
+                        // È sabato o giovedì - mostra i numeri fortunati
+                        //  const fortune = getSaturdayFortune();
                         quoteDisplay.innerHTML = createLotteryHTML(fortune);
                         quoteDisplay.classList.add('visible', 'saturday-special');
                     } else {
