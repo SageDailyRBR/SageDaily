@@ -839,6 +839,10 @@
                 "Oggi va come va", "Oggi meglio di ieri", "No, oggi non è giornata", "Me lo sento, oggi gira bene",
                 "Perché fare oggi quello che puoi fare domani?", "Se lo fai oggi, stai avanti", "Torna domani che è meglio",
                 "Oggi no, domani sì", "Fossi in te ci proverei", "Dai, fai finta di lavorare",
+                "Andrà meglio di quanto immagini", "Respira, sei più avanti di quanto pensi", "Una buona idea potrebbe trovarti prima del caffè",
+                "Spoiler: potresti cavartela benissimo", "Ci sono giorni che si aggiustano da soli", "Fai una cosa semplice e falla bene", "Un dettaglio felice potrebbe cambiare tutto",
+                "Un po’ di fiducia oggi ti starebbe benissimo", "Un passo fatto bene vale più di tre fatti a caso", "Hai diritto a una giornata decente, almeno oggi",
+                "La giornata ha del potenziale, non provocarla", "Potrebbe andare dritta. Sì, ogni tanto succede",
                 "Il destino è in pausa… chissà domani", "Meglio che non sfidi la sorte", "Vuoi un consiglio? Sopravvivi e basta",
                 "Mmmh, così così", "Il karma ti osserva", "Non complicarti la vita", "Vuoi vincere facile?",
                 "Oggi non strafare", "È meglio se ti prendi una pausa", "Me lo sento, qualcosa di buono succederà",
@@ -884,6 +888,11 @@
             ],
             en: [
                 "Today goes as it goes", "Today is better than yesterday", "No, today is not the day",
+                "It may go better than you think", "A good idea might find you before coffee", "It may not be perfect, but it could be beautiful",
+                "The right moment sometimes arrives quietly", "Do one simple thing and do it well", "Never underestimate the power of a good break",
+                "Sometimes life cooperates — shocking, but true", "Take it easy: you do not need to save the world before lunch",
+                "Today might go smoothly. Don’t ruin it with anxiety", "There is room for things to get better, and that is already news",
+                "It could go smoothly. Yes, it happens sometimes", "You deserve a decent day, at least today",
                 "I can feel it, today might go well", "Why do today what you can do tomorrow?",
                 "If you do it today, you're ahead", "Come back tomorrow, it might be better",
                 "Not today, maybe tomorrow", "If I were you, I'd try", "Go on, pretend you're working",
@@ -948,6 +957,15 @@
                     "L'universo scrolla le spalle. Interpreta come preferisci.",
                     "Il destino dice no, ma è noto per i cambi di idea.",
                     "Le nuvole coprono la risposta. Riprova dopo il caffè.",
+                    "L’oracolo sorride… quindi probabilmente sì.",
+                    "Le stelle dicono sì, ma con un leggero ritardo cosmico",
+                    "Il cosmo è dalla tua parte. Non farlo pentire",
+                    "L’oracolo ha visto di peggio: vai tranquillo",
+                    "Un sì arriva… lentamente… ma arriva",
+                    "Il no è temporaneo. Forse",
+                    "L’oracolo ha perso il segnale.",
+                    "Anche l’oracolo ha bisogno di una pausa."
+                    "Il futuro è modificabile. Usalo bene.",
                     "Il karma è indeciso. Anche lui ha le sue giornate."
                 ],
                 future: [
@@ -1156,21 +1174,29 @@
         // Statistiche SuperEnalotto (aggiornate a marzo 2026)
         const superEnalottoStats = {
             hotRanges: [
-                { min: 80, max: 89, weight: 3 },
+                { min: 80, max: 89, weight: 2 },
                 { min: 40, max: 49, weight: 3 },
+                { min: 20, max: 29, weight: 2 },
+                { min: 30, max: 39, weight: 3 },
                 { min: 60, max: 69, weight: 2 },
-                { min: 50, max: 59, weight: 2 },
+                { min: 50, max: 59, weight: 1 },
+                { min: 10, max: 19, weight: 2 },
+                { min: 0, max: 9, weight: 2 },
                 { min: 70, max: 79, weight: 1 }
             ],
             hotNumbers: {
                 80: [80, 81, 83, 85, 86, 88, 82],
                 40: [49, 45, 43, 48, 41, 40],
                 60: [68, 66, 65, 63, 62, 69],
-                50: [55, 52, 56, 51],
-                70: [79, 77, 75]
+                50: [55, 52, 56, 51, 58, 57],
+                30: [30, 31, 39, 36, 34],
+                20: [22, 29, 27, 23, 26],
+                10: [11, 12, 15, 16, 19],
+                0: [3, 8, 9, 7, 6],
+                70: [79, 77, 75, 72, 70]
             },
-            superstarCold: [87, 33, 38, 30, 34, 55, 54, 60, 81, 19, 28, 41],
-            superstarHot: [49, 51, 80, 11, 5, 52, 44, 45]
+            superstarCold: [87, 33, 38, 30, 34, 55, 54, 60, 81, 19, 28, 41, 11, 13, 90, 22],
+            superstarHot: [49, 51, 80, 11, 5, 52, 44, 45, 80, 58, 52, 18, 50, 21, 3, 14, 67]
         };
 
         // Traduzioni UI
@@ -1220,6 +1246,10 @@
             return new Date().getDay() === 6;
         }
 
+        function isThursday() {
+            return new Date().getDay() === 6;
+        }
+
         // Genera numeri casuali da un array con peso
         function weightedRandom(numbers, count) {
             const result = [];
@@ -1238,18 +1268,48 @@
             const stats = superEnalottoStats;
             
             const range80 = stats.hotNumbers[80];
-            numbers.push(...weightedRandom(range80, 2));
-            
             const range40 = stats.hotNumbers[40];
-            numbers.push(...weightedRandom(range40, 2));
-            
             const range60 = stats.hotNumbers[60];
-            numbers.push(...weightedRandom(range60, 1));
+            const range30 = stats.hotNumbers[30];
+            const remainingRanges = [stats.hotNumbers[50], stats.hotNumbers[20], stats.hotNumbers[0], stats.hotNumbers[10], stats.hotNumbers[70]].flat();
+
+             // random da 0 a 3
+            const count80 = Math.floor(Math.random() * 4); // 0–3
+            const count40 = Math.floor(Math.random() * 4); // 0–3
+            const count30 = Math.floor(Math.random() * 4); // 0–3
+
+            // aggiungi numeri
+            numbers.push(...weightedRandom(range80, count80));
+            numbers.push(...weightedRandom(range40, count40));
+            numbers.push(...weightedRandom(range30, count30));
+
+            // quanti ne mancano per arrivare a 6
+            let remaining = 6 - numbers.length;
             
-            const remainingRanges = [stats.hotNumbers[50], stats.hotNumbers[70]].flat();
-            numbers.push(...weightedRandom(remainingRanges, 1));
-            
-            return numbers.sort((a, b) => a - b);
+            // aggiungi dalla serie 60 (max 1, solo se serve)
+            if (remaining > 0) {
+               const count60 = Math.min(1, remaining);
+               numbers.push(...weightedRandom(range60, count60));
+               remaining = 6 - numbers.length;
+            }
+
+            // riempi il resto con le altre serie
+            if (remaining > 0) {
+               numbers.push(...weightedRandom(remainingRanges, remaining));
+            }
+
+            // ⚠️ sicurezza: se per qualche motivo superi 6 (es. duplicati)
+            const uniqueNumbers = [...new Set(numbers)];
+
+            // se dopo dedup hai meno di 6, completa
+            while (uniqueNumbers.length < 6) {
+               const extra = weightedRandom(remainingRanges, 1)[0];
+               if (!uniqueNumbers.includes(extra)) {
+                   uniqueNumbers.push(extra);
+               }
+            }
+
+            return uniqueNumbers.sort((a, b) => a - b);
         }
 
         // Genera il numero SuperStar dalle decine ricorrenti ma meno estratto
@@ -1284,9 +1344,29 @@
             cleanupOldQuotes();
             return fortune;
         }
+        function getThursdayFortune() {
+            const today = getTodayString();
+            const key = `fortune_${today}`;
+            const saved = localStorage.getItem(key);
+            
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            
+            const numbers = generateLuckyNumbers();
+            const superstar = generateSuperStar();
+            const fortune = { numbers, superstar };
+            
+            localStorage.setItem(key, JSON.stringify(fortune));
+            cleanupOldQuotes();
+            return fortune;
+        }
 
         function getQuoteForToday() {
             if (isSaturday()) {
+                return null;
+            }
+            if (isThursrday()) {
                 return null;
             }
             
