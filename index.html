@@ -1738,39 +1738,39 @@
                     
                     const quote = getQuoteForToday();
 
-                    // 🔽 TEST: stampa i numeri dentro la UI
-                    const testNumbers = generateLuckyNumbers();
-                    console.log("TEST:", testNumbers);
+ //                   // 🔽 TEST: stampa i numeri dentro la UI - QUESTO CODICE LO PUOI ATTIVARE PER TEST
+ //                   const testNumbers = generateLuckyNumbers();
+ //                   console.log("TEST:", testNumbers);
 
-// 🔴 TEST MODE
-if (true) {
-    const testNumbers = generateLuckyNumbers();
-    quoteDisplay.innerHTML = `
-        <div style="font-size: 1.2rem; margin-bottom: 10px;">TEST NUMERI:</div>
-        <div style="font-size: 2rem;">
-            ${testNumbers.join(" - ")}
-        </div>
-    `;
-    quoteDisplay.classList.add('visible');
-}
+ //                  //🔴 TEST MODE - QUESTO CODICE LO PUOI ATTIVARE PER TEST
+ //                    if (true) {
+ //                       const testNumbers = generateLuckyNumbers();
+ //                       quoteDisplay.innerHTML = `
+ //                         <div style="font-size: 1.2rem; margin-bottom: 10px;">TEST NUMERI:</div>
+ //                         <div style="font-size: 2rem;">
+ //                         ${testNumbers.join(" - ")}
+ //                         </div>
+ //                         `;
+ //                       quoteDisplay.classList.add('visible');
+ //                    }
 
                     
- //                   if (quote === null) {
- //                       let fortune;
- //                       if (isSaturday()) {
- //                           fortune = getSaturdayFortune();
- //                       } else if (isThursday()) {
- //                           fortune = getThursdayFortune();
- //                       }
- //                       // È sabato o giovedì - mostra i numeri fortunati
- //                       //  const fortune = getSaturdayFortune();
- //                       quoteDisplay.innerHTML = createLotteryHTML(fortune);
- //                       quoteDisplay.classList.add('visible', 'saturday-special');
- //                   } else {
- //                       // Giorno normale - mostra frase filosofica
- //                       quoteDisplay.textContent = quote;
- //                       quoteDisplay.classList.add('visible');
- //                   }
+                    if (quote === null) {
+                        let fortune;
+                        if (isSaturday()) {
+                           fortune = getSaturdayFortune();
+                        } else if (isThursday()) {
+                            fortune = getThursdayFortune();
+                        }
+                        // È sabato o giovedì - mostra i numeri fortunati
+                        //  const fortune = getSaturdayFortune();
+                        quoteDisplay.innerHTML = createLotteryHTML(fortune);
+                        quoteDisplay.classList.add('visible', 'saturday-special');
+                    } else {
+                        // Giorno normale - mostra frase filosofica
+                        quoteDisplay.textContent = quote;
+                        quoteDisplay.classList.add('visible');
+                    }
                     
                     // Mostra sezione oracolo dopo la frase
                     setTimeout(() => {
@@ -1788,10 +1788,9 @@ if (true) {
 
         // Init
         window.addEventListener('load', () => {
-            console.log("TEST:", generateLuckyNumbers());
+         //   console.log("TEST:", generateLuckyNumbers());
             startAnimation();
-   
-            // scheduleClose() rimosso - ora parte dopo l'animazione
+         // scheduleClose() rimosso - ora parte dopo l'animazione
         });
 
         // Previene zoom
