@@ -1262,87 +1262,128 @@
             return result.sort((a, b) => a - b);
         }
 
-        function getRandomCount(max, remainingTotal) {
-           return Math.floor(Math.random() * (Math.min(max, remainingTotal) + 1));
+// RIMOSSE PER STATISTICA CHATGPT
+//        function getRandomCount(max, remainingTotal) {
+//           return Math.floor(Math.random() * (Math.min(max, remainingTotal) + 1));
+//        }
+
+// RIMOSSE PER STATISTICA CHATGPT
+//        function generateMainRangeCounts() {
+//           let remaining = 6;
+
+//           const count80 = getRandomCount(3, remaining);
+//           remaining -= count80;
+
+//           const count40 = getRandomCount(3, remaining);
+//           remaining -= count40;
+
+//           const count30 = getRandomCount(3, remaining);
+//           remaining -= count30;
+
+//           return { count80, count40, count30, remaining };
+//        }
+                
+        function weightedChoice(items) {
+           const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+           let random = Math.random() * totalWeight;
+
+           for (const item of items) {
+               random -= item.weight;
+               if (random <= 0) return item.value;
+           }
+
+           return items[items.length - 1].value;
         }
 
-        function generateMainRangeCounts() {
-           let remaining = 6;
-
-           const count80 = getRandomCount(3, remaining);
-           remaining -= count80;
-
-           const count40 = getRandomCount(3, remaining);
-           remaining -= count40;
-
-           const count30 = getRandomCount(3, remaining);
-           remaining -= count30;
-
-           return { count80, count40, count30, remaining };
+        function shuffleArray(array) {
+           const arr = [...array];
+           for (let i = arr.length - 1; i > 0; i--) {
+               const j = Math.floor(Math.random() * (i + 1));
+               [arr[i], arr[j]] = [arr[j], arr[i]];
            }
-                
-        function generateLuckyNumbers() {
-            const numbers = [];
-            const stats = superEnalottoStats;
+          return arr;
+        }
 
-            const range80 = stats.hotNumbers[80];
-            const range40 = stats.hotNumbers[40];
-            const range30 = stats.hotNumbers[30];
-            const range60 = stats.hotNumbers[60];
-            const remainingRanges = [
-                stats.hotNumbers[50],
-                stats.hotNumbers[20],
-                stats.hotNumbers[0],
-                stats.hotNumbers[10],
-                stats.hotNumbers[70]
-            ].flat();
+       function getPatternByProbability() {
+       // pattern realistici per distribuire 6 numeri nelle decine
+          return weightedChoice([
+             { value: [2, 2, 1, 1], weight: 35 },
+             { value: [2, 1, 1, 1, 1], weight: 25 },
+             { value: [2, 2, 2], weight: 18 },
+             { value: [3, 1, 1, 1], weight: 10 },
+             { value: [3, 2, 1], weight: 7 },
+             { value: [4, 1, 1], weight: 2 },
+             { value: [1, 1, 1, 1, 1, 1], weight: 3 }
+         ]);
+        }
 
-            // 1) genera in modo pulito quanti numeri prendere dalle tre serie principali
-            const { count80, count40, count30, remaining } = generateMainRangeCounts();
+       function getWeightedDecadeKeys() {
+          return [
+            { key: 80, weight: 5 },
+            { key: 40, weight: 5 },
+            { key: 30, weight: 4 },
+            { key: 60, weight: 4 },
+            { key: 20, weight: 3 },
+            { key: 10, weight: 3 },
+            { key: 50, weight: 2 },
+            { key: 0,  weight: 2 },
+            { key: 70, weight: 1 }
+        ];
+       }
 
-            // 2) estrai dalle serie principali
-            numbers.push(...weightedRandom(range80, count80));
-            numbers.push(...weightedRandom(range40, count40));
-            numbers.push(...weightedRandom(range30, count30));
+       function pickUniqueDecades(count) {
+          const available = [...getWeightedDecadeKeys()];
+          const selected = [];
 
-            let stillMissing = 6 - numbers.length;
+          while (selected.length < count && available.length > 0) {
+              const chosen = weightedChoice(
+                  available.map(item => ({ value: item.key, weight: item.weight }))
+              );
 
-            // 3) aggiungi dalla serie 60 (max 1)
-            if (stillMissing > 0) {
-               const count60 = Math.min(1, stillMissing);
-               numbers.push(...weightedRandom(range60, count60));
-               stillMissing = 6 - numbers.length;
-            }
+          selected.push(chosen);
 
-           // 4) completa con le altre serie
-           if (stillMissing > 0) {
-              numbers.push(...weightedRandom(remainingRanges, stillMissing));
-           }
-
-          // 5) rimuovi eventuali duplicati
-          const uniqueNumbers = [...new Set(numbers)];
-
-          // 6) se dopo dedup manca ancora qualcosa, completa pescando da tutte le serie utili
-          const refillPool = [
-              ...range80,
-              ...range40,
-              ...range30,
-              ...range60,
-              ...remainingRanges
-          ];
-
-          while (uniqueNumbers.length < 6) {
-              const extra = weightedRandom(refillPool, 1)[0];
-              if (!uniqueNumbers.includes(extra)) {
-                 uniqueNumbers.push(extra);
-              }
+          const index = available.findIndex(item => item.key === chosen);
+             if (index !== -1) {
+                 available.splice(index, 1);
+             }
           }
 
-          // 7) se per sicurezza fossero più di 6, taglia
-          return uniqueNumbers
-              .slice(0, 6)
-              .sort((a, b) => a - b);
+          return selected;
+       }
+
+   
+    function generateLuckyNumbers() {
+          const stats = superEnalottoStats;
+          const pattern = getPatternByProbability();   // es. [2,2,1,1]
+          const decadeKeys = pickUniqueDecades(pattern.length);
+          const numbers = [];
+
+          for (let i = 0; i < pattern.length; i++) {
+              const decadeKey = decadeKeys[i];
+              const count = pattern[i];
+              const pool = stats.hotNumbers[decadeKey] || [];
+
+              numbers.push(...weightedRandom(pool, count));
           }
+
+       // rimuove eventuali duplicati
+       let uniqueNumbers = [...new Set(numbers)];
+
+       // se per qualche motivo mancano numeri, completa da tutte le serie hot
+       const refillPool = Object.values(stats.hotNumbers).flat();
+
+       while (uniqueNumbers.length < 6) {
+          const extra = weightedRandom(refillPool, 1)[0];
+          if (!uniqueNumbers.includes(extra)) {
+             uniqueNumbers.push(extra);
+          }
+       }
+
+       // sicurezza finale
+       uniqueNumbers = uniqueNumbers.slice(0, 6);
+
+       return uniqueNumbers.sort((a, b) => a - b);
+    }
 
         // Genera il numero SuperStar dalle decine ricorrenti ma meno estratto
         function generateSuperStar() {
@@ -1751,6 +1792,7 @@
         // Init
         window.addEventListener('load', () => {
             startAnimation();
+            console.log("TEST:", generateLuckyNumbers());
             // scheduleClose() rimosso - ora parte dopo l'animazione
         });
 
