@@ -1757,14 +1757,31 @@
                     dateDisplay.style.display = 'none';
                     
                     const quote = getQuoteForToday();
+
+                    // 🔽 TEST: stampa i numeri dentro la UI
+                    const testNumbers = generateLuckyNumbers();
+                    console.log("TEST:", testNumbers);
+
+// 🔴 TEST MODE
+if (true) {
+    const testNumbers = generateLuckyNumbers();
+    quoteDisplay.innerHTML = `
+        <div style="font-size: 1.2rem; margin-bottom: 10px;">TEST NUMERI:</div>
+        <div style="font-size: 2rem;">
+            ${testNumbers.join(" - ")}
+        </div>
+    `;
+    quoteDisplay.classList.add('visible');
+}
+
                     
-                    if (quote === null) {
-                        let fortune;
-                        if (isSaturday()) {
-                            fortune = getSaturdayFortune();
-                        } else if (isThursday()) {
-                            fortune = getThursdayFortune();
-                        }
+ //                   if (quote === null) {
+ //                       let fortune;
+ //                       if (isSaturday()) {
+ //                           fortune = getSaturdayFortune();
+ //                       } else if (isThursday()) {
+ //                           fortune = getThursdayFortune();
+ //                       }
                         // È sabato o giovedì - mostra i numeri fortunati
                         //  const fortune = getSaturdayFortune();
                         quoteDisplay.innerHTML = createLotteryHTML(fortune);
