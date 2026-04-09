@@ -1262,27 +1262,7 @@
             return result.sort((a, b) => a - b);
         }
 
-// RIMOSSE PER STATISTICA CHATGPT
-//        function getRandomCount(max, remainingTotal) {
-//           return Math.floor(Math.random() * (Math.min(max, remainingTotal) + 1));
-//        }
-
-// RIMOSSE PER STATISTICA CHATGPT
-//        function generateMainRangeCounts() {
-//           let remaining = 6;
-
-//           const count80 = getRandomCount(3, remaining);
-//           remaining -= count80;
-
-//           const count40 = getRandomCount(3, remaining);
-//           remaining -= count40;
-
-//           const count30 = getRandomCount(3, remaining);
-//           remaining -= count30;
-
-//           return { count80, count40, count30, remaining };
-//        }
-                
+              
         function weightedChoice(items) {
            const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
            let random = Math.random() * totalWeight;
@@ -1307,12 +1287,12 @@
        function getPatternByProbability() {
        // pattern realistici per distribuire 6 numeri nelle decine
           return weightedChoice([
-             { value: [2, 2, 1, 1], weight: 35 },
-             { value: [2, 1, 1, 1, 1], weight: 25 },
-             { value: [2, 2, 2], weight: 18 },
-             { value: [3, 1, 1, 1], weight: 10 },
+             { value: [2, 2, 1, 1], weight: 36 },
+             { value: [2, 1, 1, 1, 1], weight: 26 },
+             { value: [2, 2, 2], weight: 15 },
+             { value: [3, 1, 1, 1], weight: 13 },
              { value: [3, 2, 1], weight: 7 },
-             { value: [4, 1, 1], weight: 2 },
+             // { value: [4, 1, 1], weight: 2 },
              { value: [1, 1, 1, 1, 1, 1], weight: 3 }
          ]);
         }
